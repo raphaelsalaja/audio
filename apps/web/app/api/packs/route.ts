@@ -122,10 +122,7 @@ export async function POST(request: NextRequest) {
       url: `https://audio-kit.dev/${slug}`,
     });
   } catch (err) {
-    return NextResponse.json(
-      { error: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
 
@@ -161,9 +158,6 @@ export async function GET() {
       headers: { "Cache-Control": "public, max-age=60, s-maxage=60" },
     });
   } catch (err) {
-    return NextResponse.json(
-      { error: String(err) },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }

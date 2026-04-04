@@ -54,9 +54,7 @@ export function definePack(data: SoundPack): AudioPack {
   return createPackInstance(data);
 }
 
-export async function loadPack(
-  source: string | SoundPack,
-): Promise<AudioPack> {
+export async function loadPack(source: string | SoundPack): Promise<AudioPack> {
   if (typeof source === "string") {
     const response = await fetch(source);
     if (!response.ok)

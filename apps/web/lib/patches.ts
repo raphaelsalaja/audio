@@ -72,19 +72,19 @@ export async function getPatchesHot(): Promise<PatchWithStats[]> {
   return rows.map(rowToPatch);
 }
 
-export const getPatchByName = cache(async (
-  name: string,
-): Promise<PatchWithStats | null> => {
-  const rows = await sql`
+export const getPatchByName = cache(
+  async (name: string): Promise<PatchWithStats | null> => {
+    const rows = await sql`
     SELECT p.*, COUNT(pl.id)::int AS loads
     FROM patches p
     LEFT JOIN patch_loads pl ON pl.patch_id = p.id
     WHERE p.name = ${name}
     GROUP BY p.id;
   `;
-  if (rows.length === 0) return null;
-  return rowToPatch(rows[0]);
-});
+    if (rows.length === 0) return null;
+    return rowToPatch(rows[0]);
+  },
+);
 
 export type PatchSound = {
   id: number;

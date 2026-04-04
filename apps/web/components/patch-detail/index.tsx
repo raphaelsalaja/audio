@@ -1,9 +1,9 @@
 "use client";
 
-import type { PatchSoundsByCategory, PatchWithStats } from "@/lib/patches";
+import { usePack } from "audio-kit/react";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
-import { usePack } from "audio-kit/react";
+import type { PatchSoundsByCategory, PatchWithStats } from "@/lib/patches";
 import styles from "./styles.module.css";
 
 function formatLoads(n: number): string {
@@ -206,7 +206,8 @@ function SoundDemo({
           <h3 className={styles.categoryTitle}>{group.category}</h3>
           <div className={styles.soundGrid}>
             {group.sounds.map((sound) => {
-              const isAvailable = pack.ready && pack.sounds.includes(sound.name);
+              const isAvailable =
+                pack.ready && pack.sounds.includes(sound.name);
               const isPlaying = playing === sound.name;
 
               return (

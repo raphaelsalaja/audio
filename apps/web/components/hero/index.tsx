@@ -71,20 +71,23 @@ export function Hero() {
   const playFnCache = useRef(new Map<string, ReturnType<typeof defineSound>>());
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handlePlay = useCallback(async (name: string, definition: SoundDefinition) => {
-    await ensureReady();
+  const handlePlay = useCallback(
+    async (name: string, definition: SoundDefinition) => {
+      await ensureReady();
 
-    if (!playFnCache.current.has(name)) {
-      playFnCache.current.set(name, defineSound(definition));
-    }
+      if (!playFnCache.current.has(name)) {
+        playFnCache.current.set(name, defineSound(definition));
+      }
 
-    const play = playFnCache.current.get(name)!;
-    play();
+      const play = playFnCache.current.get(name)!;
+      play();
 
-    setPlaying(name);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => setPlaying(null), 300);
-  }, []);
+      setPlaying(name);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => setPlaying(null), 300);
+    },
+    [],
+  );
 
   function handleCopy() {
     navigator.clipboard.writeText("npm install audio-kit");

@@ -55,7 +55,7 @@
   display: flex;
   align-items: center;
   min-height: 28px;
-  margin-top: 0px !important;
+  margin-top: 0px;
   color: var(--gray-12);
 }
 

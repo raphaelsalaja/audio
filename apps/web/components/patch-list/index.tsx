@@ -1,9 +1,9 @@
 "use client";
 
-import type { PatchWithStats, SortMode } from "@/lib/patches";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import type { PatchWithStats, SortMode } from "@/lib/patches";
 import styles from "./styles.module.css";
 
 function formatLoads(n: number): string {

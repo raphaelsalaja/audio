@@ -332,13 +332,13 @@ function SidebarTree({ tree }: { tree: PageTree }) {
 }
 
 export {
-  SidebarRoot,
   SidebarAside,
   SidebarDrawer,
-  SidebarHeader,
-  SidebarNav,
-  SidebarLink,
-  SidebarSeparatorItem as SidebarSeparator,
   SidebarFolder,
+  SidebarHeader,
+  SidebarLink,
+  SidebarNav,
+  SidebarRoot,
+  SidebarSeparatorItem as SidebarSeparator,
   SidebarTree,
 };

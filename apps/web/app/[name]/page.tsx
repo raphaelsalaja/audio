@@ -1,7 +1,7 @@
-import { PatchDetail } from "@/components/patch-detail";
-import { getPatchByName, getPatchSounds } from "@/lib/patches";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { PatchDetail } from "@/components/patch-detail";
+import { getPatchByName, getPatchSounds } from "@/lib/patches";
 
 type Props = {
   params: Promise<{ name: string }>;

@@ -112,23 +112,6 @@ export function noise(
 // Re-exports
 // ---------------------------------------------------------------------------
 
-export {
-  dispose,
-  ensureReady,
-  setListener,
-  getListener,
-  createAnalyser,
-  createMasterAnalyser,
-  getDestination,
-  getMasterBus,
-  setMasterVolume,
-  renderToBuffer,
-  renderToWav,
-  bufferToWav,
-  definePack,
-  loadPack,
-};
-
 export type { AudioAnalyser } from "./analyser";
 export type { AudioPack } from "./pack";
 export type {
@@ -178,3 +161,19 @@ export type {
   VoiceHandle,
   WavetableSource,
 } from "./types";
+export {
+  bufferToWav,
+  createAnalyser,
+  createMasterAnalyser,
+  definePack,
+  dispose,
+  ensureReady,
+  getDestination,
+  getListener,
+  getMasterBus,
+  loadPack,
+  renderToBuffer,
+  renderToWav,
+  setListener,
+  setMasterVolume,
+};

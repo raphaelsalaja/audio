@@ -75,6 +75,11 @@ packs/               First-party sound packs
 
 Full docs at [audio-kit.dev](https://audio-kit.dev).
 
+## References
+
+- Built on the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+- Pack discovery and CLI inspired by [skills.sh](https://skills.sh) by Vercel
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.

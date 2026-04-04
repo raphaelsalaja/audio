@@ -1,8 +1,8 @@
 .container {
   width: 100%;
   max-width: var(--body-width);
-  margin: 0 auto;
   padding: 0 24px 64px;
+  margin: 0 auto;
 }
 
 .header {
@@ -12,8 +12,8 @@
 .title {
   font-size: 16px;
   font-weight: 600;
-  letter-spacing: -0.01em;
   color: var(--gray-12);
+  letter-spacing: -0.01em;
 }
 
 .controls {
@@ -73,10 +73,10 @@
   padding: 0 10px;
   font-size: 13px;
   color: var(--gray-12);
+  outline: none;
   background: transparent;
   border: 1px solid var(--gray-a4);
   border-radius: var(--radius-sm);
-  outline: none;
   transition: border-color 0.15s;
 }
 

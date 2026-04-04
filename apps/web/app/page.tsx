@@ -1,7 +1,7 @@
+import { Suspense } from "react";
 import { Hero } from "@/components/hero";
 import { PatchList } from "@/components/patch-list";
-import { type SortMode, getPatches } from "@/lib/patches";
-import { Suspense } from "react";
+import { getPatches, type SortMode } from "@/lib/patches";
 
 export default function Page({
   searchParams,

@@ -10,14 +10,14 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { createMasterAnalyser, type AudioAnalyser } from "./analyser";
+import { type AudioAnalyser, createMasterAnalyser } from "./analyser";
 import {
   getContext as getAudioContext,
   getDestination,
   setListener,
 } from "./context";
 import { render } from "./engine";
-import { loadPack, type AudioPack } from "./pack";
+import { type AudioPack, loadPack } from "./pack";
 import { playSequence } from "./sequence";
 import type {
   AnalyserOptions,
