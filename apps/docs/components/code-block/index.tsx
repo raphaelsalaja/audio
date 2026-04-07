@@ -10,7 +10,10 @@ interface TabItem {
 async function tokenize(code: string): Promise<TabItemWithTokens["tokens"]> {
   const { tokens } = await codeToTokens(code, {
     lang: "bash",
-    themes: { light: "ayu-light", dark: "ayu-dark" },
+    themes: {
+      light: "snazzy-light",
+      dark: "slack-dark",
+    },
     defaultColor: false,
   });
   return (tokens[0] ?? []).map((token) => ({

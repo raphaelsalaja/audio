@@ -6,8 +6,8 @@ import "@/styles/index.css";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s - Audio Kit",
-    default: "Audio Kit - Documentation",
+    template: "Audio Kit › %s",
+    default: "Audio Kit",
   },
   description: "Declarative audio synthesis for the web.",
   metadataBase: new URL("https://audio-kit.dev"),

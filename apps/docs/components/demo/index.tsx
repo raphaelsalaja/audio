@@ -3,7 +3,13 @@
 import type { SoundDefinition } from "audio-kit";
 import { defineSound, ensureReady } from "audio-kit";
 import type { ReactNode } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useId, useMemo, useRef, useState } from "react";
+import {
+  KnobHeadless,
+  KnobHeadlessLabel,
+  KnobHeadlessOutput,
+  useKnobKeyboardControls,
+} from "react-knob-headless";
 import { PlayIcon, SpeakerIcon } from "@/components/controls/icons";
 import {
   formatValue,
@@ -42,7 +48,7 @@ function playTick() {
   knobTick();
 }
 
-// --- Knob ---
+// --- Knob SVG helpers ---
 
 const ARC_START = 135;
 const ARC_END = 405;
@@ -66,22 +72,8 @@ function describeArc(
   return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y}`;
 }
 
-function Knob({
-  control,
-  value,
-  onChange,
-}: {
-  control: Control;
-  value: number;
-  onChange: (param: string, value: number) => void;
-}) {
-  const knobRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-  const startY = useRef(0);
-  const startValue = useRef(0);
-  const lastStepIndex = useRef(0);
-
-  const normalized = (value - control.min) / (control.max - control.min);
+function KnobArc({ valueRaw, min, max }: { valueRaw: number; min: number; max: number }) {
+  const normalized = (valueRaw - min) / (max - min);
   const angleDeg = ARC_START + normalized * ARC_SWEEP;
 
   const size = 48;
@@ -93,112 +85,101 @@ function Knob({
   const trackPath = describeArc(cx, cy, r, ARC_START, ARC_END);
   const valuePath =
     normalized > 0.003 ? describeArc(cx, cy, r, ARC_START, angleDeg) : "";
-
   const indicator = polarToCartesian(cx, cy, r - 7, angleDeg);
 
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      aria-hidden="true"
+    >
+      <path
+        d={trackPath}
+        fill="none"
+        stroke="var(--gray-a4)"
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      {valuePath && (
+        <path
+          d={valuePath}
+          fill="none"
+          stroke="var(--gray-12)"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+        />
+      )}
+      <circle
+        cx={indicator.x}
+        cy={indicator.y}
+        r={2.5}
+        fill="var(--gray-12)"
+      />
+    </svg>
+  );
+}
+
+function Knob({
+  control,
+  value,
+  onChange,
+}: {
+  control: Control;
+  value: number;
+  onChange: (param: string, value: number) => void;
+}) {
+  const knobId = useId();
+  const labelId = useId();
+  const lastStepIndex = useRef(Math.round(value / (control.step ?? 0.01)));
+
   const step = control.step ?? 0.01;
-  const sensitivity = (control.max - control.min) / 150;
   const tickStep =
     step * Math.max(1, Math.round((control.max - control.min) / step / 40));
+  const range = control.max - control.min;
 
-  useEffect(() => {
-    const handleMove = (e: PointerEvent) => {
-      if (!dragging.current) return;
-      const delta = startY.current - e.clientY;
-      let next = startValue.current + delta * sensitivity;
-      next = Math.round(next / step) * step;
-      next = Math.max(control.min, Math.min(control.max, next));
-
-      const stepIndex = Math.round(next / tickStep);
+  const handleChange = useCallback(
+    (newValue: number) => {
+      const stepIndex = Math.round(newValue / tickStep);
       if (stepIndex !== lastStepIndex.current) {
         lastStepIndex.current = stepIndex;
         playTick();
       }
-
-      onChange(control.param, next);
-    };
-
-    const handleUp = () => {
-      if (!dragging.current) return;
-      dragging.current = false;
-      document.body.style.cursor = "";
-    };
-
-    window.addEventListener("pointermove", handleMove);
-    window.addEventListener("pointerup", handleUp);
-    return () => {
-      window.removeEventListener("pointermove", handleMove);
-      window.removeEventListener("pointerup", handleUp);
-    };
-  }, [
-    control.min,
-    control.max,
-    control.param,
-    sensitivity,
-    step,
-    tickStep,
-    onChange,
-  ]);
-
-  const handleDown = useCallback(
-    (e: React.PointerEvent) => {
-      e.preventDefault();
-      dragging.current = true;
-      startY.current = e.clientY;
-      startValue.current = value;
-      lastStepIndex.current = Math.round(value / tickStep);
-      document.body.style.cursor = "ns-resize";
+      onChange(control.param, newValue);
     },
-    [value, tickStep],
+    [control.param, tickStep, onChange],
   );
+
+  const keyboardControlHandlers = useKnobKeyboardControls({
+    valueRaw: value,
+    valueMin: control.min,
+    valueMax: control.max,
+    step: range * 0.01,
+    stepLarger: range * 0.1,
+    onValueRawChange: handleChange,
+  });
 
   return (
     <div className={styles.knobContainer}>
-      <div
-        ref={knobRef}
+      <KnobHeadlessLabel id={labelId}>{control.label}</KnobHeadlessLabel>
+      <KnobHeadless
+        id={knobId}
         className={styles.knob}
-        onPointerDown={handleDown}
-        role="slider"
-        aria-label={control.label}
-        aria-valuemin={control.min}
-        aria-valuemax={control.max}
-        aria-valuenow={value}
-        tabIndex={0}
+        aria-labelledby={labelId}
+        valueRaw={value}
+        valueMin={control.min}
+        valueMax={control.max}
+        dragSensitivity={0.006}
+        valueRawRoundFn={(v: number) => Math.round(v / step) * step}
+        valueRawDisplayFn={(v: number) => formatValue(v, control.step)}
+        onValueRawChange={handleChange}
+        {...keyboardControlHandlers}
       >
-        <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          aria-hidden="true"
-        >
-          <path
-            d={trackPath}
-            fill="none"
-            stroke="var(--gray-a4)"
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-          />
-          {valuePath && (
-            <path
-              d={valuePath}
-              fill="none"
-              stroke="var(--gray-12)"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-            />
-          )}
-          <circle
-            cx={indicator.x}
-            cy={indicator.y}
-            r={2.5}
-            fill="var(--gray-12)"
-          />
-        </svg>
-      </div>
-      <span className={styles.knobLabel}>{control.label}</span>
-      <span className={styles.knobValue}>
+        <KnobArc valueRaw={value} min={control.min} max={control.max} />
+      </KnobHeadless>
+      <KnobHeadlessOutput htmlFor={knobId} className={styles.knobValue}>
         {formatValue(value, control.step)}
-      </span>
+      </KnobHeadlessOutput>
     </div>
   );
 }
@@ -259,11 +240,14 @@ function DemoInteractive({
 
   return (
     <div className={styles.demo}>
-      <div className={styles.visualizerArea}>
+      <div className={styles.header}>
+        <span className={styles.label}>{label}</span>
+      </div>
+      <div className={styles.body}>
         <canvas ref={canvasRef} className={styles.canvas} />
         <button
           type="button"
-          className={styles.playOverlay}
+          className={styles.playButton}
           data-active={active || undefined}
           onClick={handlePlay}
         >
@@ -271,8 +255,6 @@ function DemoInteractive({
             {active ? <SpeakerIcon /> : <PlayIcon />}
           </span>
         </button>
-      </div>
-      <div className={styles.controlsBar}>
         <div className={styles.knobs}>
           {controls.map((control) => (
             <Knob
@@ -283,9 +265,6 @@ function DemoInteractive({
             />
           ))}
         </div>
-      </div>
-      <div className={styles.footer}>
-        <span className={styles.label}>{label}</span>
       </div>
     </div>
   );
@@ -315,11 +294,14 @@ function DemoSimple({ label, definition }: DemoProps) {
 
   return (
     <div className={styles.demo}>
-      <div className={styles.visualizerArea}>
+      <div className={styles.header}>
+        <span className={styles.label}>{label}</span>
+      </div>
+      <div className={styles.body}>
         <canvas ref={canvasRef} className={styles.canvas} />
         <button
           type="button"
-          className={styles.playOverlay}
+          className={styles.playButton}
           data-active={active || undefined}
           onClick={handlePlay}
         >
@@ -327,9 +309,6 @@ function DemoSimple({ label, definition }: DemoProps) {
             {active ? <SpeakerIcon /> : <PlayIcon />}
           </span>
         </button>
-      </div>
-      <div className={styles.footer}>
-        <span className={styles.label}>{label}</span>
       </div>
     </div>
   );

@@ -1,25 +1,14 @@
 :root {
-  --bg: #ffffff;
+  --bg: var(--gray-1);
   --bg-subtle: var(--gray-2);
-  --selection: var(--gray-a4);
+  --selection: var(--gray-a2);
   --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
   --font-sans: Inter, sans-serif;
-
-  --radius: 10px;
-  --radius-sm: 6px;
-}
-
-.dark,
-.dark-theme {
-  --bg: #0a0a0a;
-  --bg-subtle: var(--gray-2);
-  color-scheme: dark;
-}
-
-.light {
-  --bg: #ffffff;
-  --bg-subtle: var(--gray-2);
-  color-scheme: light;
+  --radius-none: 0px;
+  --radius-small: 6px;
+  --radius-medium: 10px;
+  --radius-large: 12px;
+  --radius-full: 9999px;
 }
 
 :root {
@@ -38,11 +27,7 @@
 
 html {
   scrollbar-color: var(--gray-a4) transparent;
-  background: var(--bg);
-}
-
-::selection {
-  background: var(--selection);
+  background: var(--gray-1);
 }
 
 code {

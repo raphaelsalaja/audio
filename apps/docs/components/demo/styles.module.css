@@ -1,6 +1,6 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -8,24 +8,31 @@
 .demo {
   margin-bottom: 16px;
   overflow: hidden;
-  border: 1px solid var(--gray-a4);
-  border-radius: 12px;
+  background: var(--gray-a2);
+  border-radius: var(--radius-large);
 }
 
 .grid .demo {
   margin-bottom: 0;
 }
 
-/* Visualizer area */
+.header {
+  padding: 12px 14px 0;
+}
 
-.visualizerArea {
+.label {
+  color: var(--gray-11);
+  white-space: nowrap;
+  @typography 13, 500;
+}
+
+.body {
   position: relative;
   display: flex;
+  gap: 12px;
   align-items: center;
   justify-content: center;
-  min-height: 120px;
-  overflow: hidden;
-  background: var(--gray-a2);
+  padding: 16px 14px 14px;
 }
 
 .canvas {
@@ -41,14 +48,15 @@
   --vis-color: var(--gray-a4);
 }
 
-.playOverlay {
+.playButton {
   position: relative;
   z-index: 1;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   background: var(--gray-a3);
   border: none;
@@ -66,34 +74,27 @@
   transition: color 0.15s;
 }
 
-.playOverlay:hover {
+.playButton:hover {
   background: var(--gray-a4);
   transform: scale(1.05);
 }
 
-.playOverlay:hover .playButtonIcon {
+.playButton:hover .playButtonIcon {
   color: var(--gray-12);
 }
 
-.playOverlay[data-active] {
+.playButton[data-active] {
   background: var(--gray-a5);
   transform: scale(0.95);
 }
 
-.playOverlay[data-active] .playButtonIcon {
+.playButton[data-active] .playButtonIcon {
   color: var(--gray-12);
 }
 
-/* Controls bar with knobs */
-
-.controlsBar {
-  display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  border-top: 1px solid var(--gray-a4);
-}
-
 .knobs {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex: 1;
   flex-wrap: wrap;
@@ -110,7 +111,16 @@
   min-width: 56px;
 }
 
+.knobContainer > label {
+  order: 1;
+  color: var(--gray-10);
+  text-align: center;
+  white-space: nowrap;
+  @typography 11, 500;
+}
+
 .knob {
+  order: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -125,30 +135,11 @@
   opacity: 0.8;
 }
 
-.knobLabel {
-  color: var(--gray-10);
-  text-align: center;
-  white-space: nowrap;
-  @typography 11, 500;
-}
-
 .knobValue {
+  order: 3;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--gray-9);
   text-align: center;
   @typography 10;
-}
-
-.footer {
-  display: flex;
-  align-items: center;
-  padding: 10px 14px;
-  border-top: 1px solid var(--gray-a4);
-  @typography 13, 500;
-}
-
-.label {
-  color: var(--gray-11);
-  white-space: nowrap;
 }

@@ -1,10 +1,8 @@
 {
   "title": "Documentation",
   "pages": [
-    "---Introduction---",
     "index",
-    "install",
-    "features",
+    "getting-started",
     "---Concepts---",
     "...concepts",
     "---Integrations---",

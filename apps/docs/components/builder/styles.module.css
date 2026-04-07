@@ -8,7 +8,7 @@
   overflow: hidden;
   background: var(--gray-1);
   border: 1px solid var(--gray-a4);
-  border-radius: 12px;
+  border-radius: var(--radius-large);
   box-shadow:
     0 1px 2px var(--gray-a2),
     0 8px 28px var(--gray-a3);
@@ -168,7 +168,7 @@
   height: 24px;
   color: var(--gray-9);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-small);
   transition:
     color 0.12s,
     background 0.12s;
@@ -273,7 +273,7 @@
   outline: none;
   background: var(--gray-a2);
   border: 1px solid var(--gray-a4);
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   transition: border-color 0.12s;
   @typography 12;
 }
@@ -296,7 +296,7 @@
   background-repeat: no-repeat;
   background-position: right 8px center;
   border: 1px solid var(--gray-a4);
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   transition: border-color 0.12s;
   @typography 12;
 }
@@ -333,7 +333,7 @@
   gap: 6px;
   padding: 10px;
   background: var(--gray-a2);
-  border-radius: 8px;
+  border-radius: var(--radius-medium);
 }
 
 .inlineItemHeader {
@@ -356,7 +356,7 @@
 .adsrCurve {
   height: 48px;
   background: var(--gray-a2);
-  border-radius: 6px;
+  border-radius: var(--radius-small);
 }
 
 .adsrCanvas {
@@ -396,7 +396,7 @@
   padding: 4px 8px;
   color: var(--gray-9);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-small);
   transition:
     color 0.12s,
     background 0.12s;

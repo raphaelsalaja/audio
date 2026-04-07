@@ -4,34 +4,96 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
+  min-width: 0;
+  max-width: 100%;
+  margin-bottom: 24px;
+}
+
+.preFrame {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  border-radius: var(--radius-medium);
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    border: 1px solid var(--gray-a4);
+    border-radius: inherit;
+  }
+}
+
+.preScroll {
+  --code-fade: 24px;
+
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  border-radius: inherit;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &[data-fade="right"] {
+    mask-image: linear-gradient(
+      to right,
+      black calc(100% - var(--code-fade)),
+      transparent 100%
+    );
+  }
+
+  &[data-fade="left"] {
+    mask-image: linear-gradient(
+      to left,
+      black calc(100% - var(--code-fade)),
+      transparent 100%
+    );
+  }
+
+  &[data-fade="both"] {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black var(--code-fade),
+      black calc(100% - var(--code-fade)),
+      transparent 100%
+    );
+  }
 }
 
 .root pre {
+  width: max-content;
+  min-width: 100%;
   padding-block: 12px;
   padding-inline: 16px;
   margin-bottom: 0;
-  overflow-x: auto;
+  overflow-x: visible;
+  text-wrap: nowrap;
+  white-space: pre;
   border: none;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-2);
+  border-radius: var(--radius-none);
+  box-shadow: none;
   @typography 13;
 }
 
 .root pre code {
+  display: inline-block;
+  min-width: 100%;
   padding: 0;
   font-size: inherit;
   color: inherit;
   counter-reset: line;
   background: none;
-  border-radius: 0;
+  border-radius: var(--radius-none);
   box-shadow: none;
 }
 
 .root pre code > :global(.line) {
   display: inline-block;
   min-width: 100%;
-  padding: 0 16px 0 0;
   white-space: pre;
 }
 
@@ -82,7 +144,7 @@
   cursor: pointer;
   background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-small);
   transition:
     color 0.15s,
     background 0.15s;
@@ -100,7 +162,7 @@
   align-items: center;
   justify-content: space-between;
   color: var(--gray-10);
-  @typography 13, 500;
+  @typography 13, 450;
 }
 
 .title {
@@ -163,11 +225,15 @@
   width: var(--active-tab-width);
   height: var(--active-tab-height);
   background: var(--gray-3);
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   translate: var(--active-tab-left) -50%;
   transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
   transition-duration: 0.4s;
   transition-property: translate, width;
+}
+
+.panel {
+  min-width: 0;
 }
 
 .panel pre {

@@ -11,6 +11,7 @@ import { Calligraph } from "calligraph";
 import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";
 import { useCallback, useRef, useState } from "react";
+import { useScrollFade } from "@/lib/use-scroll-fade";
 import styles from "./styles.module.css";
 
 const MotionCheck = motion(Check);
@@ -75,6 +76,8 @@ export function Pre(
     <span className={styles.icon} dangerouslySetInnerHTML={{ __html: icon }} />
   ) : null;
 
+  const { ref: scrollRef, fade } = useScrollFade<HTMLDivElement>();
+
   return (
     <div className={styles.root}>
       {title && (
@@ -86,9 +89,13 @@ export function Pre(
           <CopyButton text={getText} />
         </div>
       )}
-      <pre ref={ref} {...rest}>
-        {children}
-      </pre>
+      <div className={styles.preFrame}>
+        <div className={styles.preScroll} ref={scrollRef} data-fade={fade}>
+          <pre ref={ref} {...rest}>
+            {children}
+          </pre>
+        </div>
+      </div>
     </div>
   );
 }
@@ -117,6 +124,7 @@ const tabIcons: Record<string, React.ReactNode> = {
 export function TabsClient({ items }: { items: TabItemWithTokens[] }) {
   const [active, setActive] = useState(items[0]?.label ?? "");
   const activeItem = items.find((item) => item.label === active);
+  const { ref: scrollRef, fade } = useScrollFade<HTMLDivElement>();
 
   return (
     <BaseTabs.Root
@@ -139,17 +147,21 @@ export function TabsClient({ items }: { items: TabItemWithTokens[] }) {
         <CopyButton text={activeItem?.value ?? ""} />
       </BaseTabs.List>
       <div className={styles.panel}>
-        <pre>
-          <code>
-            {activeItem?.tokens.map((token) => (
-              <span key={token.offset} style={token.style as CSSProperties}>
-                <Calligraph animation="smooth" stagger={0} drift={{ x: 5 }}>
-                  {token.content}
-                </Calligraph>
-              </span>
-            ))}
-          </code>
-        </pre>
+        <div className={styles.preFrame}>
+          <div className={styles.preScroll} ref={scrollRef} data-fade={fade}>
+            <pre>
+              <code>
+                {activeItem?.tokens.map((token) => (
+                  <span key={token.offset} style={token.style as CSSProperties}>
+                    <Calligraph animation="smooth" stagger={0} drift={{ x: 5 }}>
+                      {token.content}
+                    </Calligraph>
+                  </span>
+                ))}
+              </code>
+            </pre>
+          </div>
+        </div>
       </div>
     </BaseTabs.Root>
   );

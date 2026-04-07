@@ -8,7 +8,7 @@
   cursor: pointer;
   background: none;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   transition:
     color 0.15s,
     background 0.15s;

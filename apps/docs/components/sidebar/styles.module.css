@@ -1,68 +1,18 @@
 .sidebar {
   --sidebar-item-height: 28px;
-  --fade-size: 40px;
 
   position: sticky;
   top: 0;
-  z-index: 10;
   display: flex;
   flex-shrink: 0;
   flex-direction: column;
   width: var(--sidebar-width);
   height: 100dvh;
-  padding: var(--page-top) 0 24px;
+  padding-top: var(--page-top);
   overflow-y: auto;
   scrollbar-width: none;
-  background: var(--bg);
 
   @typography 12, 400;
-}
-
-.sidebar[data-fade="bottom"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black calc(100% - var(--fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black calc(100% - var(--fade-size)),
-    transparent 100%
-  );
-}
-
-.sidebar[data-fade="top"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size),
-    black 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size),
-    black 100%
-  );
-}
-
-.sidebar[data-fade="both"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size),
-    black calc(100% - var(--fade-size)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size),
-    black calc(100% - var(--fade-size)),
-    transparent 100%
-  );
 }
 
 .header {
@@ -113,7 +63,9 @@
   align-items: center;
   height: var(--sidebar-item-height);
   color: var(--gray-10);
-  transition: all 0.4s;
+  transition:
+    color 0.15s,
+    font-variation-settings 0.15s;
 }
 
 .link:hover {
@@ -163,40 +115,84 @@
   transition: color 0.15s;
 }
 
+.folderLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--sidebar-item-height);
+  font: inherit;
+  color: var(--gray-11);
+  transition: color 0.15s;
+}
+
+.folderLabelLink {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
 .folderLabelText {
   display: flex;
   gap: 6px;
   align-items: center;
 }
 
-.folderLabel:hover {
+.folderLabel:hover,
+.folderLabelRow:hover {
   color: var(--gray-12);
 }
 
-.folderLabel .icon {
+.folderLabel .icon,
+.folderLabelRow .icon {
   opacity: 0.6;
 }
 
-.folderLabel:hover .icon {
+.folderLabel:hover .icon,
+.folderLabelRow:hover .icon {
   opacity: 0.9;
 }
 
-.folderLabelActive {
+.folderLabelActive,
+.folderLabelRow.folderLabelActive {
   color: var(--gray-12);
 }
 
-.folderLabelActive .icon {
+.folderLabelActive .icon,
+.folderLabelRow.folderLabelActive .icon {
   opacity: 1;
+}
+
+.chevronButton {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  color: var(--gray-8);
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.15s;
+}
+
+.chevronButton:hover {
+  color: var(--gray-11);
 }
 
 .chevron {
   flex-shrink: 0;
-  color: var(--gray-8);
-  transition: transform 0.2s;
-}
-
-.chevronOpen {
-  transform: rotate(90deg);
 }
 
 .folderChildren {
@@ -212,8 +208,9 @@
   position: absolute;
   inset-inline-start: 0;
   width: 1.5px;
+  pointer-events: none;
   content: "";
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
 }
 
 .folderChildren::before {
@@ -277,54 +274,6 @@
   height: 100%;
   padding: 24px 0;
   overflow-y: auto;
-  background: var(--bg);
-}
-
-.drawer[data-fade="bottom"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black calc(100% - var(--fade-size, 40px)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black calc(100% - var(--fade-size, 40px)),
-    transparent 100%
-  );
-}
-
-.drawer[data-fade="top"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size, 40px),
-    black 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size, 40px),
-    black 100%
-  );
-}
-
-.drawer[data-fade="both"] {
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size, 40px),
-    black calc(100% - var(--fade-size, 40px)),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black var(--fade-size, 40px),
-    black calc(100% - var(--fade-size, 40px)),
-    transparent 100%
-  );
 }
 
 @media (width <= 768px) {

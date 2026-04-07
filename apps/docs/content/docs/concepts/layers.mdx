@@ -17,16 +17,6 @@ defineSound({
 });
 ```
 
-<Demo
-  label="Single layer"
-  definition={{ source: { type: "sine", frequency: 440 }, envelope: { decay: 0.1 }, gain: 0.3 }}
-  controls={[
-    { param: "source.frequency", label: "Frequency", min: 60, max: 2000, step: 1 },
-    { param: "envelope.decay", label: "Decay", min: 0.01, max: 1, step: 0.01 },
-    { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-  ]}
-/>
-
 ## Multiple layers
 
 Use the `layers` array to stack signals. Each one is independent - different waveforms, different timing, different volumes.
@@ -58,17 +48,6 @@ defineSound({
 });
 ```
 
-<Demo
-  label="Arpeggiated chord"
-  definition={{ layers: [{ source: { type: "triangle", frequency: 523 }, envelope: { attack: 0.01, decay: 0.15 }, gain: 0.25 }, { source: { type: "triangle", frequency: 659 }, envelope: { attack: 0.01, decay: 0.15 }, gain: 0.25, delay: 0.08 }, { source: { type: "triangle", frequency: 784 }, envelope: { attack: 0.01, decay: 0.15 }, gain: 0.25, delay: 0.16 }], effects: [{ type: "reverb", decay: 0.3, damping: 0.4, mix: 0.15 }] }}
-  controls={[
-    { param: "layers.0.gain", label: "Layer 1", min: 0, max: 1, step: 0.01 },
-    { param: "layers.1.gain", label: "Layer 2", min: 0, max: 1, step: 0.01 },
-    { param: "layers.2.gain", label: "Layer 3", min: 0, max: 1, step: 0.01 },
-    { param: "effects.0.mix", label: "Reverb", min: 0, max: 1, step: 0.01 },
-  ]}
-/>
-
 ## Onset delay
 
 The `delay` property on a layer offsets when it starts (in seconds). This is how you create arpeggiated chords, staggered hits, and build-ups.
@@ -98,28 +77,6 @@ defineSound({
   ],
 });
 ```
-
-<DemoGrid>
-  <Demo
-    label="Distorted + clean"
-    definition={{ layers: [{ source: { type: "sine", frequency: 440 }, envelope: { decay: 0.3 }, gain: 0.3, effects: [{ type: "distortion", amount: 20, mix: 0.5 }] }, { source: { type: "sine", frequency: 880 }, envelope: { decay: 0.3 }, gain: 0.2 }], effects: [{ type: "reverb", decay: 1.2, mix: 0.35 }] }}
-    controls={[
-      { param: "layers.0.gain", label: "Dirty", min: 0, max: 1, step: 0.01 },
-      { param: "layers.1.gain", label: "Clean", min: 0, max: 1, step: 0.01 },
-      { param: "effects.0.mix", label: "Reverb", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="Startup chime"
-    definition={{ layers: [{ source: { type: "triangle", frequency: 392, detune: 3.5 }, envelope: { attack: 0.05, decay: 0.6 }, gain: 0.14 }, { source: { type: "triangle", frequency: 493.88, detune: 3.5 }, envelope: { attack: 0.05, decay: 0.56 }, gain: 0.14, delay: 0.02 }, { source: { type: "triangle", frequency: 587.33, detune: 3.5 }, envelope: { attack: 0.05, decay: 0.52 }, gain: 0.14, delay: 0.04 }, { source: { type: "triangle", frequency: 784, detune: 3.5 }, envelope: { attack: 0.05, decay: 0.48 }, gain: 0.14, delay: 0.06 }] }}
-    controls={[
-      { param: "layers.0.gain", label: "Layer 1", min: 0, max: 0.5, step: 0.01 },
-      { param: "layers.1.gain", label: "Layer 2", min: 0, max: 0.5, step: 0.01 },
-      { param: "layers.2.gain", label: "Layer 3", min: 0, max: 0.5, step: 0.01 },
-      { param: "layers.3.gain", label: "Layer 4", min: 0, max: 0.5, step: 0.01 },
-    ]}
-  />
-</DemoGrid>
 
 ## Layer reference
 

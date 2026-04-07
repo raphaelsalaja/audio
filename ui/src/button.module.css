@@ -11,7 +11,7 @@
   cursor: pointer;
   user-select: none;
   background: var(--gray-12);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-small);
   transition:
     background 120ms ease,
     opacity 120ms ease;

@@ -5,13 +5,21 @@
 
 :root {
   --sidebar-width: 200px;
-  --toc-width: 180px;
-  --body-width: 1024px;
+  --table-of-contents-width: 200px;
+  --body-width: 768px;
   --page-top: 64px;
+  --page-padding: 32px;
+  --fade-size: 40px;
+  --layout-width: calc(
+    var(--sidebar-width) +
+    var(--body-width) +
+    var(--table-of-contents-width)
+  );
 }
 
 html {
   scrollbar-gutter: stable;
   overscroll-behavior-y: none;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  background: var(--gray-1);
 }

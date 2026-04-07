@@ -4,19 +4,21 @@ import type { ComponentPropsWithoutRef } from "react";
 import { SoundBuilder } from "@/components/builder";
 import { Card, CardGrid } from "@/components/card";
 import { Pre, Tabs } from "@/components/code-block";
+import { CopyForLLM } from "@/components/copy-for-llm";
 import { Demo, DemoGrid } from "@/components/demo";
-import { Home } from "@/components/home";
 import { PageNav } from "@/components/page-nav";
 import proseStyles from "@/components/prose/styles.module.css";
+import { TableWrapper } from "@/components/prose/table-wrapper";
 import { Step, Steps } from "@/components/steps";
+import { TableOfContents } from "@/components/toc";
 import { source } from "@/lib/source";
 import styles from "./styles.module.css";
 
 function Table(props: ComponentPropsWithoutRef<"table">) {
   return (
-    <div className={proseStyles.tableWrapper}>
+    <TableWrapper>
       <table {...props} />
-    </div>
+    </TableWrapper>
   );
 }
 
@@ -29,21 +31,20 @@ export default async function Page(props: {
 
   if (!page) notFound();
 
-  const { body: MDX } = page.data;
+  const { body: MDX, toc } = page.data;
 
   const tree = source.getPageTree();
 
   const neighbours = findNeighbour(tree, page.url);
 
-  if (page.url === "/") {
-    return <Home />;
-  }
-
   return (
-    <div className={styles.container}>
+    <>
       <article className={styles.content}>
-        <div className={proseStyles.prose}>
+        <div className={styles.header}>
           <h1 className={styles.title}>{page.data.title}</h1>
+          <CopyForLLM />
+        </div>
+        <div className={proseStyles.prose}>
           <MDX
             components={{
               pre: Pre,
@@ -61,7 +62,8 @@ export default async function Page(props: {
         </div>
         <PageNav previous={neighbours.previous} next={neighbours.next} />
       </article>
-    </div>
+      <TableOfContents toc={toc} />
+    </>
   );
 }
 

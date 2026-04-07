@@ -2,41 +2,62 @@
   position: sticky;
   top: 0;
   flex-shrink: 0;
-  width: var(--toc-width);
+  width: var(--table-of-contents-width);
   height: 100dvh;
-  padding: var(--page-top) 0 24px;
+
+  padding-top: var(--page-top);
   overflow-y: auto;
 }
 
 .label {
-  padding-left: 8px;
-  margin-bottom: 8px;
-  color: var(--gray-9);
-  text-transform: uppercase;
-  @typography 11, 600, 1.5, 0.55;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding-left: 12px;
+  margin-bottom: 12px;
+  color: var(--gray-11);
+  @typography 12, 500;
 }
 
 .nav {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.indicator {
+  position: absolute;
+  inset-inline: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--gray-a2);
+  border-radius: var(--radius-small);
+  opacity: 0;
+  transition:
+    top 0.15s ease,
+    height 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .link {
   display: block;
-  padding: 3px 8px;
+  padding-block: 6px;
   color: var(--gray-9);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-small);
   transition: color 0.15s;
-  @typography 12, 0, 1.4;
+  @typography 12;
 }
 
 .link:hover {
   color: var(--gray-12);
 }
 
-.active {
+.link[data-active] {
   color: var(--gray-12);
+  @typography 12, 550;
 }
 
 @media (width <= 768px) {

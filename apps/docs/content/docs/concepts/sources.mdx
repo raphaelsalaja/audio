@@ -20,50 +20,6 @@ The most common source. Pick a waveform, set a frequency, and optionally sweep o
 }
 ```
 
-<DemoGrid>
-  <Demo
-    label="Sine"
-    definition={{ source: { type: "sine", frequency: 440 }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "source.frequency", label: "Frequency", min: 60, max: 2000, step: 1 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="Triangle"
-    definition={{ source: { type: "triangle", frequency: 440 }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "source.frequency", label: "Frequency", min: 60, max: 2000, step: 1 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="Square"
-    definition={{ source: { type: "square", frequency: 440 }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "source.frequency", label: "Frequency", min: 60, max: 2000, step: 1 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="Sawtooth"
-    definition={{ source: { type: "sawtooth", frequency: 440 }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "source.frequency", label: "Frequency", min: 60, max: 2000, step: 1 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="FM Bell"
-    definition={{ source: { type: "sine", frequency: 880, fm: { ratio: 3.5, depth: 200 } }, envelope: { attack: 0.001, decay: 1.2 }, gain: 0.2 }}
-    controls={[
-      { param: "source.frequency", label: "Frequency", min: 200, max: 2000, step: 1 },
-      { param: "source.fm.ratio", label: "FM Ratio", min: 0.5, max: 8, step: 0.1 },
-      { param: "source.fm.depth", label: "FM Depth", min: 0, max: 800, step: 10 },
-    ]}
-  />
-</DemoGrid>
-
 | Property    | Type                              | Description                    |
 | ----------- | --------------------------------- | ------------------------------ |
 | `type`      | `"sine" \| "triangle" \| "square" \| "sawtooth"` | Waveform shape |
@@ -78,33 +34,6 @@ Broadband noise. Useful for percussion, textures, and risers.
 ```ts
 { source: { type: "noise", color: "pink" } }
 ```
-
-<DemoGrid>
-  <Demo
-    label="White noise"
-    definition={{ source: { type: "noise", color: "white" }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "envelope.decay", label: "Decay", min: 0.01, max: 2, step: 0.01 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="Pink noise"
-    definition={{ source: { type: "noise", color: "pink" }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "envelope.decay", label: "Decay", min: 0.01, max: 2, step: 0.01 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-  <Demo
-    label="Brown noise"
-    definition={{ source: { type: "noise", color: "brown" }, envelope: { decay: 0.3 }, gain: 0.3 }}
-    controls={[
-      { param: "envelope.decay", label: "Decay", min: 0.01, max: 2, step: 0.01 },
-      { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-    ]}
-  />
-</DemoGrid>
 
 Colors: `"white"` (default), `"pink"`, `"brown"`.
 
@@ -121,15 +50,6 @@ Define your own harmonic content with an array of partial amplitudes.
   },
 }
 ```
-
-<Demo
-  label="Wavetable"
-  definition={{ source: { type: "wavetable", harmonics: [1, 0.5, 0.25, 0.125], frequency: 440 }, envelope: { decay: 0.5 }, gain: 0.3 }}
-  controls={[
-    { param: "source.frequency", label: "Frequency", min: 60, max: 2000, step: 1 },
-    { param: "gain", label: "Gain", min: 0, max: 1, step: 0.01 },
-  ]}
-/>
 
 ## Sample
 

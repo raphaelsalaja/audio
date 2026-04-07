@@ -18,41 +18,6 @@ Filters remove or boost specific frequencies. audio-kit supports all 8 biquad ty
 }
 ```
 
-<DemoGrid>
-  <Demo
-    label="Lowpass"
-    definition={{ source: { type: "sawtooth", frequency: 110 }, filter: { type: "lowpass", frequency: 800, resonance: 6 }, envelope: { decay: 0.5 }, gain: 0.25 }}
-    controls={[
-      { param: "filter.frequency", label: "Cutoff", min: 100, max: 8000, step: 10 },
-      { param: "filter.resonance", label: "Resonance", min: 0, max: 20, step: 0.5 },
-    ]}
-  />
-  <Demo
-    label="Highpass"
-    definition={{ source: { type: "sawtooth", frequency: 110 }, filter: { type: "highpass", frequency: 800, resonance: 6 }, envelope: { decay: 0.5 }, gain: 0.25 }}
-    controls={[
-      { param: "filter.frequency", label: "Cutoff", min: 100, max: 8000, step: 10 },
-      { param: "filter.resonance", label: "Resonance", min: 0, max: 20, step: 0.5 },
-    ]}
-  />
-  <Demo
-    label="Bandpass"
-    definition={{ source: { type: "sawtooth", frequency: 110 }, filter: { type: "bandpass", frequency: 800, resonance: 6 }, envelope: { decay: 0.5 }, gain: 0.25 }}
-    controls={[
-      { param: "filter.frequency", label: "Center", min: 100, max: 8000, step: 10 },
-      { param: "filter.resonance", label: "Q", min: 0.5, max: 20, step: 0.5 },
-    ]}
-  />
-  <Demo
-    label="Notch"
-    definition={{ source: { type: "sawtooth", frequency: 110 }, filter: { type: "notch", frequency: 800, resonance: 6 }, envelope: { decay: 0.5 }, gain: 0.25 }}
-    controls={[
-      { param: "filter.frequency", label: "Center", min: 100, max: 8000, step: 10 },
-      { param: "filter.resonance", label: "Q", min: 0.5, max: 20, step: 0.5 },
-    ]}
-  />
-</DemoGrid>
-
 ## Biquad types
 
 `lowpass`, `highpass`, `bandpass`, `notch`, `allpass`, `peaking`, `lowshelf`, `highshelf`
@@ -91,17 +56,6 @@ Sweep the cutoff frequency over time. The filter starts at `frequency`, ramps to
   },
 }
 ```
-
-<Demo
-  label="Filter envelope sweep"
-  definition={{ source: { type: "sawtooth", frequency: 110 }, filter: { type: "lowpass", frequency: 200, resonance: 8, envelope: { attack: 0.01, peak: 4000, decay: 0.3 } }, envelope: { decay: 0.5 }, gain: 0.25 }}
-  controls={[
-    { param: "filter.frequency", label: "Base", min: 50, max: 2000, step: 10 },
-    { param: "filter.envelope.peak", label: "Peak", min: 500, max: 10000, step: 100 },
-    { param: "filter.envelope.decay", label: "Decay", min: 0.05, max: 2, step: 0.05 },
-    { param: "filter.resonance", label: "Resonance", min: 0, max: 20, step: 0.5 },
-  ]}
-/>
 
 | Property  | Type     | Description                      |
 | --------- | -------- | -------------------------------- |

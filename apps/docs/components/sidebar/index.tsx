@@ -14,8 +14,9 @@ import { usePathname } from "next/navigation";
 import {
   createContext,
   use,
-  useCallback,
   useEffect,
+  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -43,58 +44,19 @@ function SidebarRoot({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  return (
-    <SidebarContext value={{ pathname, onNavigate }}>{children}</SidebarContext>
+  const value = useMemo<SidebarContextValue>(
+    () => ({ pathname, onNavigate }),
+    [pathname, onNavigate],
   );
-}
-
-function useScrollFade(ref: React.RefObject<HTMLElement | null>) {
-  const update = useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    const threshold = 2;
-    const canScrollUp = scrollTop > threshold;
-    const canScrollDown = scrollTop + clientHeight < scrollHeight - threshold;
-
-    if (canScrollUp && canScrollDown) el.dataset.fade = "both";
-    else if (canScrollDown) el.dataset.fade = "bottom";
-    else if (canScrollUp) el.dataset.fade = "top";
-    else delete el.dataset.fade;
-  }, [ref]);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    update();
-    el.addEventListener("scroll", update, { passive: true });
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", update);
-      ro.disconnect();
-    };
-  }, [ref, update]);
+  return <SidebarContext value={value}>{children}</SidebarContext>;
 }
 
 function SidebarAside({ children }: { children: React.ReactNode }) {
-  const ref = useRef<HTMLElement>(null);
-  useScrollFade(ref);
-  return (
-    <aside ref={ref} className={styles.sidebar}>
-      {children}
-    </aside>
-  );
+  return <aside className={styles.sidebar}>{children}</aside>;
 }
 
 function SidebarDrawer({ children }: { children: React.ReactNode }) {
-  const ref = useRef<HTMLElement>(null);
-  useScrollFade(ref);
-  return (
-    <aside ref={ref} className={styles.drawer}>
-      {children}
-    </aside>
-  );
+  return <aside className={styles.drawer}>{children}</aside>;
 }
 
 function SidebarHeader({ children }: { children: React.ReactNode }) {
@@ -171,7 +133,6 @@ function SidebarFolder({
   children: React.ReactNode;
 }) {
   const { pathname, onNavigate } = useSidebar();
-  const [open, setOpen] = useState(false);
 
   const folderPath = href ? href.replace(/\/[^/]+$/, "") : undefined;
   const isActive = folderPath
@@ -179,6 +140,8 @@ function SidebarFolder({
     : href
       ? pathname.startsWith(href)
       : false;
+
+  const [open, setOpen] = useState(isActive);
   const entry =
     (folderPath ? getIconEntry(folderPath) : undefined) ??
     (href ? getIconEntry(href) : undefined);
@@ -187,87 +150,82 @@ function SidebarFolder({
     if (isActive) setOpen(true);
   }, [isActive]);
 
-  const label = (
-    <>
-      <span className={styles.folderLabelText}>
-        {entry && (
-          <entry.icon
-            width={14}
-            height={14}
-            className={styles.icon}
-            style={isActive ? { color: entry.color } : undefined}
-          />
-        )}
-        {name}
-      </span>
-      <svg
-        role="img"
-        aria-label="Toggle"
-        className={`${styles.chevron} ${open ? styles.chevronOpen : ""}`}
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setOpen((v) => !v);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            e.stopPropagation();
-            setOpen((v) => !v);
-          }
-        }}
-      >
-        <path d="M6 4l4 4-4 4" />
-      </svg>
-    </>
+  const chevron = (
+    <motion.svg
+      aria-hidden={true}
+      className={styles.chevron}
+      animate={{ rotate: open ? 90 : 0 }}
+      transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    >
+      <path d="M6 4l4 4-4 4" />
+    </motion.svg>
+  );
+
+  const labelText = (
+    <span className={styles.folderLabelText}>
+      {entry && (
+        <entry.icon
+          width={14}
+          height={14}
+          className={styles.icon}
+          style={isActive ? { color: entry.color } : undefined}
+        />
+      )}
+      {name}
+    </span>
   );
 
   return (
     <div className={styles.folder}>
       {href ? (
-        <Link
-          href={href}
-          className={`${styles.folderLabel} ${isActive ? styles.folderLabelActive : ""}`}
-          onClick={() => {
-            setOpen(true);
-            onNavigate?.();
-          }}
+        <div
+          className={`${styles.folderLabelRow} ${isActive ? styles.folderLabelActive : ""}`}
         >
-          {label}
-        </Link>
+          <Link
+            href={href}
+            className={styles.folderLabelLink}
+            onClick={() => {
+              setOpen(true);
+              onNavigate?.();
+            }}
+          >
+            {labelText}
+          </Link>
+          <button
+            type="button"
+            className={styles.chevronButton}
+            aria-expanded={open}
+            aria-label={`${open ? "Collapse" : "Expand"} ${name}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen((v) => !v);
+            }}
+          >
+            {chevron}
+          </button>
+        </div>
       ) : (
         <button
           type="button"
           className={`${styles.folderLabel} ${isActive ? styles.folderLabelActive : ""}`}
           onClick={() => setOpen((v) => !v)}
         >
-          {label}
+          {labelText}
+          {chevron}
         </button>
       )}
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{ overflow: "hidden" }}
-          >
-            <FolderChildren>{children}</FolderChildren>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FolderChildren open={open}>{children}</FolderChildren>
     </div>
   );
 }
 
-function measureActive(el: HTMLDivElement, _pathname: string) {
+function measureActive(el: HTMLDivElement) {
   const active = el.querySelector(`.${styles.active}`) as HTMLElement | null;
   if (active) {
     el.style.setProperty("--active-top", `${active.offsetTop}px`);
@@ -277,20 +235,39 @@ function measureActive(el: HTMLDivElement, _pathname: string) {
   }
 }
 
-function FolderChildren({ children }: { children: React.ReactNode }) {
+function FolderChildren({
+  children,
+  open,
+}: {
+  children: React.ReactNode;
+  open: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const { pathname } = useSidebar();
 
-  useEffect(() => {
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname + open affect active rail position
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    measureActive(el, pathname);
-  }, [pathname]);
+    measureActive(el);
+  }, [pathname, open]);
 
   return (
-    <div ref={ref} className={styles.folderChildren}>
-      {children}
-    </div>
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          style={{ overflow: "hidden" }}
+        >
+          <div ref={ref} className={styles.folderChildren}>
+            {children}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

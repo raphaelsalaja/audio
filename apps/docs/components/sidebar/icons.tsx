@@ -1,3 +1,4 @@
+import Atom from "@audio-kit/icons/fill-duo/atom";
 import CircleWaveformLines from "@audio-kit/icons/fill-duo/circle-waveform-lines";
 import ClockRotateClockwise from "@audio-kit/icons/fill-duo/clock-rotate-clockwise";
 import Code from "@audio-kit/icons/fill-duo/code";
@@ -7,6 +8,7 @@ import Download from "@audio-kit/icons/fill-duo/download";
 import Equalizer from "@audio-kit/icons/fill-duo/equalizer";
 import Headphones from "@audio-kit/icons/fill-duo/headphones";
 import Layers from "@audio-kit/icons/fill-duo/layers";
+import MapSearch from "@audio-kit/icons/fill-duo/map-search";
 import MediaPlay from "@audio-kit/icons/fill-duo/media-play";
 import Music from "@audio-kit/icons/fill-duo/music";
 import MusicNote from "@audio-kit/icons/fill-duo/music-note";
@@ -30,9 +32,10 @@ interface IconEntry {
 }
 
 const iconMap: Record<string, IconEntry> = {
-  "/": { icon: Music, color: "var(--blue-9)" },
-  "/install": { icon: Download, color: "var(--green-9)" },
-  "/features": { icon: Stack, color: "var(--violet-9)" },
+  "/": { icon: MapSearch, color: "var(--blue-9)" },
+  "/getting-started": { icon: Download, color: "var(--green-9)" },
+  "/getting-started/typescript": { icon: Code, color: "var(--blue-9)" },
+  "/getting-started/react": { icon: Atom, color: "var(--cyan-9)" },
 
   "/concepts/sources": { icon: WaveformLines, color: "var(--purple-9)" },
   "/concepts/filters": { icon: Equalizer, color: "var(--orange-9)" },

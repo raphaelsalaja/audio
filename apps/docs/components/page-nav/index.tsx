@@ -1,3 +1,5 @@
+import ChevronLeft from "@audio-kit/icons/fill/chevron-left";
+import ChevronRight from "@audio-kit/icons/fill/chevron-right";
 import type { Item } from "fumadocs-core/page-tree";
 import Link from "next/link";
 import styles from "./styles.module.css";
@@ -15,53 +17,21 @@ export function PageNav({ previous, next }: PageNavProps) {
       {previous ? (
         <Link href={previous.url} className={styles.card}>
           <span className={styles.direction}>
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M10 4L6 8l4 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ChevronLeft width={12} height={12} />
             Previous
           </span>
           <span className={styles.title}>{previous.name}</span>
         </Link>
-      ) : (
-        <span />
-      )}
+      ) : null}
       {next ? (
         <Link href={next.url} className={`${styles.card} ${styles.next}`}>
           <span className={styles.direction}>
             Next
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M6 4l4 4-4 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ChevronRight width={12} height={12} />
           </span>
           <span className={styles.title}>{next.name}</span>
         </Link>
-      ) : (
-        <span />
-      )}
+      ) : null}
     </nav>
   );
 }

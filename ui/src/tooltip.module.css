@@ -4,7 +4,7 @@
   line-height: 1.4;
   color: var(--gray-1);
   background: var(--gray-12);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-small);
   box-shadow: var(--shadow-4);
   transform-origin: var(--transform-origin);
   transition:

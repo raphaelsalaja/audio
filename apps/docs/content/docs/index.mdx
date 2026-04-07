@@ -3,7 +3,20 @@ title: Overview
 description: Declarative audio synthesis for the web.
 ---
 
-Audio Kit lets you describe sounds as plain objects and play them with a single function call. No imperative node wiring. No class hierarchies. Just JSON in, audio out.
+Audio-kit is a declarative audio synthesis library for the web. Define sounds as plain objects and play them with a single function call.
+
+## Quickstart
+
+Install `audio-kit` with your package manager of choice.
+
+<Tabs items={[
+  { label: "npm", value: "npm install audio-kit" },
+  { label: "yarn", value: "yarn add audio-kit" },
+  { label: "pnpm", value: "pnpm add audio-kit" },
+  { label: "bun", value: "bun add audio-kit" },
+]} />
+
+Define a sound as a plain object and call the returned function to play it.
 
 ```ts
 import { defineSound } from "audio-kit";
@@ -17,6 +30,23 @@ const pop = defineSound({
 pop();
 ```
 
-A sound definition is a plain object describing a signal path. Pick a source, shape it with an envelope, run it through filters and effects, and play it. Layers let you stack multiple signals into one sound. Packs let you bundle sounds as JSON and load them at runtime.
+## Get Started
 
-Audio Kit handles the Web Audio plumbing: one shared `AudioContext`, automatic node cleanup, sample-accurate scheduling, and a `prefers-reduced-motion` opt-out. Works with vanilla JS, React, or any framework.
+<CardGrid>
+  <Card href="/getting-started/typescript" title="TypeScript" description="Understand the basic usage." />
+  <Card href="/getting-started/react" title="React" description="Learn the React hooks." />
+</CardGrid>
+
+## Integrate
+
+<CardGrid>
+  <Card href="/integrations/patches" title="Sound Packs" description="Bundling sounds as packs." />
+  <Card href="/integrations/react" title="React Hooks" description="useSound, usePack, and more." />
+</CardGrid>
+
+## Information
+
+<CardGrid>
+  <Card href="/api/sounds" title="API Reference" description="Full API documentation." />
+  <Card href="/resources/changelog" title="Changelog" description="What's new in each release." />
+</CardGrid>
