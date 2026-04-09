@@ -59,7 +59,7 @@ const iconMap: Record<string, IconEntry> = {
     icon: MusicNote,
     color: "var(--purple-9)",
   },
-  "/integrations/react/use-pack": {
+  "/integrations/react/use-patch": {
     icon: MusicPlaylist,
     color: "var(--violet-9)",
   },
@@ -88,11 +88,11 @@ const iconMap: Record<string, IconEntry> = {
   "/api/sounds/shorthands": { icon: MediaPlay, color: "var(--green-9)" },
 
   "/api/patches": { icon: Stack, color: "var(--violet-9)" },
-  "/api/patches/define-pack": {
+  "/api/patches/define-patch": {
     icon: MusicPlaylist,
     color: "var(--amber-9)",
   },
-  "/api/patches/load-pack": { icon: Download, color: "var(--green-9)" },
+  "/api/patches/load-patch": { icon: Download, color: "var(--green-9)" },
 
   "/api/context": { icon: Dial, color: "var(--amber-9)" },
   "/api/context/get-context": {

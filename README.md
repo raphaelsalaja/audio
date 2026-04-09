@@ -30,13 +30,13 @@ click();
 ### React
 
 ```tsx
-import { usePack } from "@web-kits/audio/react";
+import { usePatch } from "@web-kits/audio/react";
 
 function App() {
-  const pack = usePack("/packs/core.json");
+  const patch = usePatch("/patches/core.json");
 
   return (
-    <button onClick={() => pack.play("click")} disabled={!pack.ready}>
+    <button onClick={() => patch.play("click")} disabled={!patch.ready}>
       Click me
     </button>
   );
@@ -45,7 +45,7 @@ function App() {
 
 ## CLI
 
-Browse and install community sound packs directly from GitHub repos:
+Browse and install community sound patches directly from GitHub repos:
 
 ```bash
 # Browse the registry
@@ -54,10 +54,10 @@ npx @web-kits/audio add
 # Install from a GitHub repo
 npx @web-kits/audio add user/repo
 
-# Create a new pack
+# Create a new patch
 npx @web-kits/audio init
 
-# List installed packs
+# List installed patches
 npx @web-kits/audio list
 ```
 
@@ -67,7 +67,7 @@ npx @web-kits/audio list
 packages/audio       Core library + CLI (published to npm)
 apps/web             Documentation, registry, and homepage
 ui/                  Shared UI components
-packs/               First-party sound packs
+patches/             First-party sound patches
 ```
 
 ## Documentation
@@ -77,7 +77,7 @@ Full docs at [web-kits.dev/audio](https://web-kits.dev/audio).
 ## References
 
 - Built on the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-- Pack discovery and CLI inspired by [skills.sh](https://skills.sh) by Vercel
+- Patch discovery and CLI inspired by [skills.sh](https://skills.sh) by Vercel
 
 ## Contributing
 

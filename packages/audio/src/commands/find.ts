@@ -1,5 +1,5 @@
 import pc from "picocolors";
-import { fetchPackIndex } from "./utils.js";
+import { fetchPatchIndex } from "./utils.js";
 
 export async function find(args: string[]) {
   const query = args.join(" ").toLowerCase();
@@ -8,16 +8,16 @@ export async function find(args: string[]) {
   console.log(pc.bold("@web-kits/audio find"));
   console.log();
 
-  let index: Awaited<ReturnType<typeof fetchPackIndex>>;
+  let index: Awaited<ReturnType<typeof fetchPatchIndex>>;
   try {
-    index = await fetchPackIndex();
+    index = await fetchPatchIndex();
   } catch (err) {
     console.log(pc.red(`Failed to fetch registry: ${err}`));
     process.exit(1);
   }
 
   if (index.length === 0) {
-    console.log(pc.dim("No packs available in the registry."));
+    console.log(pc.dim("No patches available in the registry."));
     console.log();
     return;
   }
@@ -31,13 +31,13 @@ export async function find(args: string[]) {
     : index;
 
   if (matches.length === 0) {
-    console.log(pc.dim(`No packs found for "${query}"`));
+    console.log(pc.dim(`No patches found for "${query}"`));
     console.log();
     return;
   }
 
   console.log(
-    pc.dim(`Install with ${pc.reset("npx @web-kits/audio add --pack <name>")}`),
+    pc.dim(`Install with ${pc.reset("npx @web-kits/audio add --patch <name>")}`),
   );
   console.log();
 

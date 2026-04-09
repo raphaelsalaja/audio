@@ -4,23 +4,28 @@ import { join } from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import {
-  type DiscoveredPack,
-  discoverPacksFromGitHub,
-  discoverPacksFromLocal,
-  fetchPackIndex,
-  fetchPackJson,
-  getInstalledPacks,
-  getPacksDir,
+  type DiscoveredPatch,
+  type InstalledPatch,
+  type PatchIndexEntry,
+  discoverPatchesFromGitHub,
+  discoverPatchesFromLocal,
+  ensureConfig,
+  fetchPatchIndex,
+  fetchPatchJson,
+  generateModule,
+  getInstalledPatches,
+  getPatchesDir,
   isGitHubSource,
   isLocalSource,
-  registerPack,
-  validatePack,
+  regenerateIndex,
+  registerPatch,
+  validatePatch,
 } from "./utils.js";
 
 export interface AddOptions {
   list?: boolean;
   yes?: boolean;
-  pack?: string;
+  patch?: string;
 }
 
 export function parseAddOptions(args: string[]): {
@@ -36,8 +41,8 @@ export function parseAddOptions(args: string[]): {
       options.yes = true;
     } else if (arg === "-l" || arg === "--list") {
       options.list = true;
-    } else if (arg === "--pack") {
-      options.pack = args[++i];
+    } else if (arg === "--patch") {
+      options.patch = args[++i];
     } else if (arg && !arg.startsWith("-")) {
       source = arg;
     }
@@ -76,12 +81,12 @@ export async function add(args: string[]) {
 
 async function addFromLocal(source: string, options: AddOptions) {
   const s = p.spinner();
-  s.start("Scanning local path for packs...");
+  s.start("Scanning local path for patches...");
 
-  let discovered: DiscoveredPack[];
+  let discovered: DiscoveredPatch[];
   try {
-    discovered = await discoverPacksFromLocal(source);
-    s.stop(`Found ${discovered.length} pack(s)`);
+    discovered = await discoverPatchesFromLocal(source);
+    s.stop(`Found ${discovered.length} patch(es)`);
   } catch (err) {
     s.stop("Failed to scan local path.");
     p.log.error(String(err));
@@ -89,21 +94,23 @@ async function addFromLocal(source: string, options: AddOptions) {
   }
 
   if (discovered.length === 0) {
-    p.log.warn("No valid sound packs found at this path.");
-    p.outro("Packs must be JSON files with a name and sounds object.");
+    p.log.warn("No valid sound patches found at this path.");
+    p.outro("Patches must be JSON files with a name and sounds object.");
     return;
   }
 
   if (options.list) {
-    printPackList(discovered);
+    printPatchList(discovered);
     return;
   }
 
-  const toInstall = selectPacks(discovered, options);
+  const toInstall = selectPatches(discovered, options);
   if (!toInstall || toInstall.length === 0) return;
 
-  const installed = await getInstalledPacks();
-  const installedNames = new Set(installed.map((pk) => pk.name));
+  const installed = await getInstalledPatches();
+  const installedNames = new Set(
+    installed.map((p: InstalledPatch) => p.name),
+  );
 
   const final = options.yes
     ? toInstall
@@ -111,37 +118,37 @@ async function addFromLocal(source: string, options: AddOptions) {
   if (!final || final.length === 0) return;
 
   const dl = p.spinner();
-  dl.start(`Installing ${final.length} pack(s)...`);
+  dl.start(`Installing ${final.length} patch(es)...`);
 
   const results: string[] = [];
-  for (const pack of final) {
+  for (const patch of final) {
     try {
-      const raw = await readFile(pack.downloadUrl, "utf-8");
+      const raw = await readFile(patch.downloadUrl, "utf-8");
       const data = JSON.parse(raw) as Record<string, unknown>;
-      if (!validatePack(data)) {
-        p.log.warn(`Skipping ${pack.name}: invalid pack format`);
+      if (!validatePatch(data)) {
+        p.log.warn(`Skipping ${patch.name}: invalid patch format`);
         continue;
       }
-      await writePack(pack.name, data);
+      await writePatch(patch.name, data);
       results.push(data.name);
     } catch (err) {
-      p.log.warn(`Failed to install ${pack.name}: ${err}`);
+      p.log.warn(`Failed to install ${patch.name}: ${err}`);
     }
   }
 
-  dl.stop(`Installed ${results.length} pack(s)`);
-  p.note(results.map((n) => `  - ${n}`).join("\n"), "Installed packs");
+  dl.stop(`Installed ${results.length} patch(es)`);
+  p.note(results.map((n) => `  - ${n}`).join("\n"), "Installed patches");
   p.outro("Done!");
 }
 
 async function addFromGitHub(source: string, options: AddOptions) {
   const s = p.spinner();
-  s.start("Scanning repository for packs...");
+  s.start("Scanning repository for patches...");
 
-  let discovered: DiscoveredPack[];
+  let discovered: DiscoveredPatch[];
   try {
-    discovered = await discoverPacksFromGitHub(source);
-    s.stop(`Found ${discovered.length} pack(s)`);
+    discovered = await discoverPatchesFromGitHub(source);
+    s.stop(`Found ${discovered.length} patch(es)`);
   } catch (err) {
     s.stop("Failed to scan repository.");
     p.log.error(String(err));
@@ -149,20 +156,22 @@ async function addFromGitHub(source: string, options: AddOptions) {
   }
 
   if (discovered.length === 0) {
-    p.log.warn("No valid sound packs found in this repository.");
-    p.outro("Packs must be JSON files with a name and sounds object.");
+    p.log.warn("No valid sound patches found in this repository.");
+    p.outro("Patches must be JSON files with a name and sounds object.");
     return;
   }
 
   if (options.list) {
-    printPackList(discovered);
+    printPatchList(discovered);
     return;
   }
 
-  const installed = await getInstalledPacks();
-  const installedNames = new Set(installed.map((pk) => pk.name));
+  const installed = await getInstalledPatches();
+  const installedNames = new Set(
+    installed.map((p: InstalledPatch) => p.name),
+  );
 
-  const toInstall = await resolvePackSelection(
+  const toInstall = await resolvePatchSelection(
     discovered,
     installedNames,
     options,
@@ -170,40 +179,40 @@ async function addFromGitHub(source: string, options: AddOptions) {
   if (!toInstall || toInstall.length === 0) return;
 
   const dl = p.spinner();
-  dl.start(`Installing ${toInstall.length} pack(s)...`);
+  dl.start(`Installing ${toInstall.length} patch(es)...`);
 
   const results: string[] = [];
-  for (const pack of toInstall) {
+  for (const patch of toInstall) {
     try {
-      const data = await fetchPackJson(pack.downloadUrl);
-      if (!validatePack(data)) {
-        p.log.warn(`Skipping ${pack.name}: invalid pack format`);
+      const data = await fetchPatchJson(patch.downloadUrl);
+      if (!validatePatch(data)) {
+        p.log.warn(`Skipping ${patch.name}: invalid patch format`);
         continue;
       }
-      await writePack(pack.name, data);
-      registerPack(pack.downloadUrl);
+      await writePatch(patch.name, data);
+      registerPatch(patch.downloadUrl);
       results.push(data.name);
     } catch (err) {
-      p.log.warn(`Failed to install ${pack.name}: ${err}`);
+      p.log.warn(`Failed to install ${patch.name}: ${err}`);
     }
   }
 
-  dl.stop(`Installed ${results.length} pack(s)`);
+  dl.stop(`Installed ${results.length} patch(es)`);
 
-  p.note(results.map((n) => `  - ${n}`).join("\n"), "Installed packs");
+  p.note(results.map((n) => `  - ${n}`).join("\n"), "Installed patches");
   p.outro("Done!");
 }
 
 async function addFromUrl(url: string, options: AddOptions) {
   const s = p.spinner();
-  s.start("Fetching pack...");
+  s.start("Fetching patch...");
 
   try {
-    const data = await fetchPackJson(url);
-    if (!validatePack(data)) {
-      s.stop("Invalid pack format.");
+    const data = await fetchPatchJson(url);
+    if (!validatePatch(data)) {
+      s.stop("Invalid patch format.");
       p.log.error(
-        "The fetched JSON is not a valid sound pack (missing name or sounds).",
+        "The fetched JSON is not a valid sound patch (missing name or sounds).",
       );
       process.exit(1);
     }
@@ -217,10 +226,10 @@ async function addFromUrl(url: string, options: AddOptions) {
       return;
     }
 
-    await writePack(data.name, data);
-    registerPack(url);
+    await writePatch(data.name, data);
+    registerPatch(url);
   } catch (err) {
-    s.stop("Failed to fetch pack.");
+    s.stop("Failed to fetch patch.");
     p.log.error(String(err));
     process.exit(1);
   }
@@ -228,14 +237,14 @@ async function addFromUrl(url: string, options: AddOptions) {
 
 async function addFromRegistry(options: AddOptions) {
   const s = p.spinner();
-  s.start("Fetching available packs...");
+  s.start("Fetching available patches...");
 
-  let index: Awaited<ReturnType<typeof fetchPackIndex>>;
+  let index: Awaited<ReturnType<typeof fetchPatchIndex>>;
   try {
-    index = await fetchPackIndex();
-    s.stop(`Found ${index.length} packs`);
+    index = await fetchPatchIndex();
+    s.stop(`Found ${index.length} patches`);
   } catch (err) {
-    s.stop("Failed to fetch pack index.");
+    s.stop("Failed to fetch patch index.");
     p.log.error(String(err));
     process.exit(1);
   }
@@ -249,27 +258,30 @@ async function addFromRegistry(options: AddOptions) {
     return;
   }
 
-  const installed = await getInstalledPacks();
-  const installedNames = new Set(installed.map((pk) => pk.name));
+  const installed = await getInstalledPatches();
+  const installedNames = new Set(
+    installed.map((p: InstalledPatch) => p.name),
+  );
 
   let names: string[];
 
-  if (options.pack) {
-    const packName = options.pack;
-    names = [packName];
+  if (options.patch) {
+    const patchName = options.patch;
+    names = [patchName];
     const match = index.find(
-      (e) => e.name.toLowerCase() === packName.toLowerCase(),
+      (e: PatchIndexEntry) =>
+        e.name.toLowerCase() === patchName.toLowerCase(),
     );
     if (!match) {
-      p.log.error(`Pack "${packName}" not found in registry.`);
+      p.log.error(`Patch "${patchName}" not found in registry.`);
       process.exit(1);
     }
   } else if (options.yes) {
-    names = index.map((e) => e.name);
+    names = index.map((e: PatchIndexEntry) => e.name);
   } else {
     const selected = await p.multiselect({
-      message: "Select packs to install",
-      options: index.map((entry) => ({
+      message: "Select patches to install",
+      options: index.map((entry: PatchIndexEntry) => ({
         value: entry.name,
         label: `${entry.name}${installedNames.has(entry.name) ? " (installed)" : ""}`,
         hint: entry.description,
@@ -283,7 +295,7 @@ async function addFromRegistry(options: AddOptions) {
 
     names = selected as string[];
     if (names.length === 0) {
-      p.outro("No packs selected.");
+      p.outro("No patches selected.");
       return;
     }
   }
@@ -292,7 +304,7 @@ async function addFromRegistry(options: AddOptions) {
     const existing = names.filter((n) => installedNames.has(n));
     if (existing.length > 0) {
       const overwrite = await p.confirm({
-        message: `${existing.length} pack(s) already installed. Overwrite?`,
+        message: `${existing.length} patch(es) already installed. Overwrite?`,
       });
       if (p.isCancel(overwrite) || !overwrite) {
         p.cancel("Cancelled.");
@@ -302,51 +314,51 @@ async function addFromRegistry(options: AddOptions) {
   }
 
   const dl = p.spinner();
-  dl.start(`Downloading ${names.length} pack(s)...`);
+  dl.start(`Downloading ${names.length} patch(es)...`);
 
   const results: string[] = [];
   for (const name of names) {
     try {
-      const data = await fetchPackJson(name);
-      if (!validatePack(data)) {
-        p.log.warn(`Skipping ${name}: invalid pack format`);
+      const data = await fetchPatchJson(name);
+      if (!validatePatch(data)) {
+        p.log.warn(`Skipping ${name}: invalid patch format`);
         continue;
       }
-      await writePack(name, data);
+      await writePatch(name, data);
       results.push(data.name);
     } catch (err) {
       p.log.warn(`Failed to download ${name}: ${err}`);
     }
   }
 
-  dl.stop(`Downloaded ${results.length} pack(s)`);
+  dl.stop(`Downloaded ${results.length} patch(es)`);
 
-  p.note(results.map((n) => `  - ${n}`).join("\n"), "Installed packs");
+  p.note(results.map((n) => `  - ${n}`).join("\n"), "Installed patches");
   p.outro("Done!");
 }
 
-function printPackList(packs: DiscoveredPack[]) {
+function printPatchList(patches: DiscoveredPatch[]) {
   console.log();
-  for (const pack of packs) {
-    const desc = pack.description ? `  ${pc.dim(pack.description)}` : "";
+  for (const patch of patches) {
+    const desc = patch.description ? `  ${pc.dim(patch.description)}` : "";
     console.log(
-      `  ${pc.bold(pack.name)}  ${pc.dim(`${pack.soundCount} sounds`)}${desc}`,
+      `  ${pc.bold(patch.name)}  ${pc.dim(`${patch.soundCount} sounds`)}${desc}`,
     );
   }
   console.log();
 }
 
-function selectPacks(
-  discovered: DiscoveredPack[],
+function selectPatches(
+  discovered: DiscoveredPatch[],
   options: AddOptions,
-): DiscoveredPack[] {
-  if (options.pack) {
-    const packName = options.pack;
+): DiscoveredPatch[] {
+  if (options.patch) {
+    const patchName = options.patch;
     const match = discovered.filter(
-      (d) => d.name.toLowerCase() === packName.toLowerCase(),
+      (d) => d.name.toLowerCase() === patchName.toLowerCase(),
     );
     if (match.length === 0) {
-      p.log.error(`Pack "${packName}" not found.`);
+      p.log.error(`Patch "${patchName}" not found.`);
       process.exit(1);
     }
     return match;
@@ -355,18 +367,18 @@ function selectPacks(
   return discovered;
 }
 
-async function resolvePackSelection(
-  discovered: DiscoveredPack[],
+async function resolvePatchSelection(
+  discovered: DiscoveredPatch[],
   installedNames: Set<string>,
   options: AddOptions,
-): Promise<DiscoveredPack[]> {
-  if (options.pack) {
-    const packName = options.pack;
+): Promise<DiscoveredPatch[]> {
+  if (options.patch) {
+    const patchName = options.patch;
     const match = discovered.filter(
-      (d) => d.name.toLowerCase() === packName.toLowerCase(),
+      (d) => d.name.toLowerCase() === patchName.toLowerCase(),
     );
     if (match.length === 0) {
-      p.log.error(`Pack "${packName}" not found.`);
+      p.log.error(`Patch "${patchName}" not found.`);
       process.exit(1);
     }
     return match;
@@ -376,21 +388,21 @@ async function resolvePackSelection(
 
   if (discovered.length === 1) return discovered;
 
-  return await promptPackSelection(discovered, installedNames);
+  return await promptPatchSelection(discovered, installedNames);
 }
 
-async function promptPackSelection(
-  discovered: DiscoveredPack[],
+async function promptPatchSelection(
+  discovered: DiscoveredPatch[],
   installedNames: Set<string>,
 ) {
   const selected = await p.multiselect({
-    message: "Select packs to install",
-    options: discovered.map((pack) => ({
-      value: pack.name,
-      label: `${pack.name}${installedNames.has(pack.name) ? " (installed)" : ""}`,
-      hint: pack.description
-        ? `${pack.soundCount} sounds — ${pack.description}`
-        : `${pack.soundCount} sounds`,
+    message: "Select patches to install",
+    options: discovered.map((patch) => ({
+      value: patch.name,
+      label: `${patch.name}${installedNames.has(patch.name) ? " (installed)" : ""}`,
+      hint: patch.description
+        ? `${patch.soundCount} sounds — ${patch.description}`
+        : `${patch.soundCount} sounds`,
     })),
   });
 
@@ -404,38 +416,38 @@ async function promptPackSelection(
 }
 
 async function confirmOverwrites(
-  packs: DiscoveredPack[],
+  patches: DiscoveredPatch[],
   installedNames: Set<string>,
-): Promise<DiscoveredPack[]> {
-  const existing = packs.filter((pk) => installedNames.has(pk.name));
-  if (existing.length === 0) return packs;
+): Promise<DiscoveredPatch[]> {
+  const existing = patches.filter((patch) => installedNames.has(patch.name));
+  if (existing.length === 0) return patches;
 
   const overwrite = await p.confirm({
-    message: `${existing.length} pack(s) already installed. Overwrite?`,
+    message: `${existing.length} patch(es) already installed. Overwrite?`,
   });
   if (p.isCancel(overwrite) || !overwrite) {
     p.cancel("Cancelled.");
     process.exit(0);
   }
-  return packs;
+  return patches;
 }
 
-async function writePack(filename: string, data: Record<string, unknown>) {
-  const dir = getPacksDir();
+async function writePatch(filename: string, data: Record<string, unknown>) {
+  await ensureConfig();
+  const dir = getPatchesDir();
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }
-
-  const packData = {
-    $schema: "node_modules/@web-kits/audio/schemas/pack.schema.json",
-    ...data,
-  };
 
   const slug = filename
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const target = join(dir, `${slug}.json`);
-  await writeFile(target, `${JSON.stringify(packData, null, 2)}\n`, "utf-8");
+  const moduleSource = generateModule(
+    data as { name: string; sounds: Record<string, unknown> },
+  );
+  const target = join(dir, `${slug}.ts`);
+  await writeFile(target, moduleSource, "utf-8");
+  await regenerateIndex(dir);
 }

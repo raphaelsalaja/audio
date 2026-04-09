@@ -17,7 +17,7 @@ import {
   setListener,
 } from "./context";
 import { render } from "./engine";
-import { type AudioPack, loadPack } from "./pack";
+import { type AudioPatch, loadPatch } from "./patch";
 import { playSequence } from "./sequence";
 import type {
   AnalyserOptions,
@@ -26,7 +26,7 @@ import type {
   SequenceOptions,
   SequenceStep,
   SoundDefinition,
-  SoundPack,
+  SoundPatch,
   VoiceHandle,
 } from "./types";
 
@@ -228,10 +228,10 @@ export function useAnalyser(opts?: AnalyserOptions): AudioAnalyser {
 }
 
 // ---------------------------------------------------------------------------
-// usePack — memoized wrapper with useEffect for source changes
+// usePatch — memoized wrapper with useEffect for source changes
 // ---------------------------------------------------------------------------
 
-const emptyPack: AudioPack = {
+const emptyPatch: AudioPatch = {
   ready: false,
   name: "",
   sounds: [],
@@ -246,10 +246,10 @@ const emptyPack: AudioPack = {
   },
 };
 
-export function usePack(source: string | SoundPack): AudioPack {
+export function usePatch(source: string | SoundPatch): AudioPatch {
   const { state } = use(SoundContext);
   const reducedMotion = usePrefersReducedMotion();
-  const [pack, setPack] = useState<AudioPack | null>(null);
+  const [patch, setPatch] = useState<AudioPatch | null>(null);
 
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -259,8 +259,8 @@ export function usePack(source: string | SoundPack): AudioPack {
 
   useEffect(() => {
     let cancelled = false;
-    loadPack(source).then((p) => {
-      if (!cancelled) setPack(p);
+    loadPatch(source).then((p) => {
+      if (!cancelled) setPatch(p);
     });
     return () => {
       cancelled = true;
@@ -268,18 +268,18 @@ export function usePack(source: string | SoundPack): AudioPack {
   }, [source]);
 
   return useMemo(() => {
-    if (!pack) return emptyPack;
+    if (!patch) return emptyPatch;
 
     return {
-      ...pack,
+      ...patch,
       play(name: string, opts?: PlayOptions) {
         const { enabled, volume } = stateRef.current;
         if (!enabled || reducedMotionRef.current) return { stop() {} };
         const v = (opts?.volume ?? 1) * volume;
-        return pack.play(name, { ...opts, volume: v });
+        return patch.play(name, { ...opts, volume: v });
       },
     };
-  }, [pack]);
+  }, [patch]);
 }
 
 // ---------------------------------------------------------------------------

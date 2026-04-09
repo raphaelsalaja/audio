@@ -3,7 +3,7 @@
   "pages": [
     "provider",
     "use-sound",
-    "use-pack",
+    "use-patch",
     "use-sequence",
     "use-analyser",
     "use-listener"

@@ -1,10 +1,10 @@
-import { mkdirSync, realpathSync, rmSync } from "node:fs";
+import { mkdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getPacksDir } from "../src/commands/utils.js";
+import { getPatchesDir } from "../src/commands/utils.js";
 
-describe("getPacksDir", () => {
+describe("getPatchesDir", () => {
   let tempDir: string;
   let originalCwd: string;
 
@@ -23,16 +23,21 @@ describe("getPacksDir", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("returns packs/ when no public/ directory exists", () => {
+  it("returns .web-kits/audio/ when no config exists", () => {
     process.chdir(tempDir);
-    const result = getPacksDir();
-    expect(result).toBe(join(tempDir, "packs"));
+    const result = getPatchesDir();
+    expect(result).toBe(join(tempDir, ".web-kits", "audio"));
   });
 
-  it("returns public/packs/ when public/ directory exists", () => {
-    mkdirSync(join(tempDir, "public"));
+  it("returns custom path from .web-kits/config.json", () => {
+    const configDir = join(tempDir, ".web-kits");
+    mkdirSync(configDir, { recursive: true });
+    writeFileSync(
+      join(configDir, "config.json"),
+      JSON.stringify({ output: "src/sounds" }),
+    );
     process.chdir(tempDir);
-    const result = getPacksDir();
-    expect(result).toBe(join(tempDir, "public", "packs"));
+    const result = getPatchesDir();
+    expect(result).toBe(join(tempDir, "src", "sounds"));
   });
 });

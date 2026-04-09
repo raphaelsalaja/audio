@@ -35,11 +35,10 @@ pnpm lint
 ## Monorepo layout
 
 ```
-packages/legato   Core library + CLI
-apps/docs            Documentation site (Fumadocs)
-apps/web             Pack registry and homepage
+packages/audio       Core library + CLI
+apps/web             Documentation site (Fumadocs)
 ui/                  Shared UI components
-packs/               First-party sound packs
+patches/             First-party sound patches
 ```
 
 ## Making changes
@@ -95,7 +94,7 @@ feat: add bandpass filter type
 fix(envelope): resolve attack timing drift
 refactor: extract audio context into shared module
 perf: cache frequency calculations in oscillator
-docs: add pack authoring guide
+docs: add patch authoring guide
 build: update typescript to v6
 chore: init
 ```
@@ -109,14 +108,14 @@ See the full [Conventional Commits Cheatsheet](https://gist.github.com/qoomon/5d
 - Make sure CI passes before requesting review.
 - If your change affects the public API, include a changeset.
 
-## Sound packs
+## Sound patches
 
-To contribute a first-party sound pack:
+To contribute a first-party sound patch:
 
-1. Create a JSON file under `packs/`.
-2. Follow the pack schema (`npx @web-kits/audio init` generates a template).
+1. Create a JSON file under `patches/`.
+2. Follow the patch schema (`npx @web-kits/audio init` generates a template).
 3. Include well-named, well-tuned sound definitions.
-4. Open a PR with a brief description of the pack.
+4. Open a PR with a brief description of the patch.
 
 ## License
 

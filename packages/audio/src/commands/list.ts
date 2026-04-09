@@ -1,22 +1,22 @@
 import * as p from "@clack/prompts";
-import { getInstalledPacks, getPacksDir } from "./utils.js";
+import { getInstalledPatches, getPatchesDir } from "./utils.js";
 
 export async function list(_args: string[]) {
   p.intro("@web-kits/audio list");
 
-  const packs = await getInstalledPacks();
+  const patches = await getInstalledPatches();
 
-  if (packs.length === 0) {
-    p.log.warn(`No packs found in ${getPacksDir()}`);
-    p.outro("Run `@web-kits/audio add` to install packs.");
+  if (patches.length === 0) {
+    p.log.warn(`No patches found in ${getPatchesDir()}`);
+    p.outro("Run `@web-kits/audio add` to install patches.");
     return;
   }
 
-  const rows = packs.map(
-    (pk) =>
-      `  ${pk.name.padEnd(16)} ${String(pk.soundCount).padStart(3)} sounds   ${pk.description ?? ""}`,
+  const rows = patches.map(
+    (patch) =>
+      `  ${patch.name.padEnd(16)} ${String(patch.soundCount).padStart(3)} sounds   ${patch.description ?? ""}`,
   );
 
-  p.note(rows.join("\n"), `${packs.length} pack(s) installed`);
-  p.outro(getPacksDir());
+  p.note(rows.join("\n"), `${patches.length} patch(es) installed`);
+  p.outro(getPatchesDir());
 }

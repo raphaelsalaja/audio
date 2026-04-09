@@ -5,7 +5,7 @@ import { getPatchesAllTime } from "@/lib/patches";
 
 export const metadata: Metadata = {
   title: "Library",
-  description: "Browse and discover community sound packs for your UI.",
+  description: "Browse and discover community sound patches for your UI.",
 };
 
 export default function PatchesPage() {

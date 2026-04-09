@@ -7,8 +7,8 @@ export async function init(_args: string[]) {
   p.intro("@web-kits/audio init");
 
   const name = await p.text({
-    message: "Pack name",
-    placeholder: "my-pack",
+    message: "Patch name",
+    placeholder: "my-patch",
     validate: (v) => (v.length === 0 ? "Name is required" : undefined),
   });
 
@@ -29,7 +29,7 @@ export async function init(_args: string[]) {
 
   const description = await p.text({
     message: "Description",
-    placeholder: "What does this pack sound like?",
+    placeholder: "What does this patch sound like?",
   });
 
   if (p.isCancel(description)) {
@@ -55,8 +55,8 @@ export async function init(_args: string[]) {
     }
   }
 
-  const pack = {
-    $schema: "node_modules/@web-kits/audio/schemas/pack.schema.json",
+  const patch = {
+    $schema: "node_modules/@web-kits/audio/schemas/patch.schema.json",
     name: name as string,
     author: (author as string) || undefined,
     version: "1.0.0",
@@ -65,7 +65,7 @@ export async function init(_args: string[]) {
     sounds: {},
   };
 
-  await writeFile(target, `${JSON.stringify(pack, null, 2)}\n`, "utf-8");
+  await writeFile(target, `${JSON.stringify(patch, null, 2)}\n`, "utf-8");
 
   p.log.success(`Created ${filename}`);
   p.outro("Add sounds to the `sounds` object to get started.");

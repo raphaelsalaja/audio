@@ -10,7 +10,7 @@ export async function GET(
   const { name } = await params;
 
   const rows = await sql`
-    SELECT pack_json, source_url
+    SELECT patch_json, source_url
     FROM patches WHERE name = ${name}
   `;
 
@@ -20,8 +20,8 @@ export async function GET(
 
   const patch = rows[0];
 
-  if (patch.pack_json) {
-    return NextResponse.json(patch.pack_json, {
+  if (patch.patch_json) {
+    return NextResponse.json(patch.patch_json, {
       headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" },
     });
   }
@@ -29,7 +29,7 @@ export async function GET(
   const sourceUrl = patch.source_url as string | null;
   if (!sourceUrl) {
     return NextResponse.json(
-      { error: "Pack has no source URL or cached JSON" },
+      { error: "Patch has no source URL or cached JSON" },
       { status: 404 },
     );
   }
@@ -37,19 +37,19 @@ export async function GET(
   const res = await fetch(sourceUrl);
   if (!res.ok) {
     return NextResponse.json(
-      { error: `Failed to fetch pack from source: ${res.status}` },
+      { error: `Failed to fetch patch from source: ${res.status}` },
       { status: 502 },
     );
   }
 
-  const packData = await res.json();
+  const patchData = await res.json();
 
   await sql`
-    UPDATE patches SET pack_json = ${JSON.stringify(packData)}::jsonb
+    UPDATE patches SET patch_json = ${JSON.stringify(patchData)}::jsonb
     WHERE name = ${name}
   `;
 
-  return NextResponse.json(packData, {
+  return NextResponse.json(patchData, {
     headers: { "Cache-Control": "public, max-age=3600, s-maxage=3600" },
   });
 }

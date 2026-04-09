@@ -41,19 +41,19 @@ A patch is a JSON file that maps names to sound definitions. Ship them as static
 ## Load from a URL
 
 ```ts
-import { loadPack } from "@web-kits/audio";
+import { loadPatch } from "@web-kits/audio";
 
-const pack = await loadPack("/packs/minimal.json");
-const voice = pack.play("tap");
+const patch = await loadPatch("/patches/minimal.json");
+const voice = patch.play("tap");
 ```
 
 ## Define inline
 
 ```ts
-import { definePack } from "@web-kits/audio";
+import { definePatch } from "@web-kits/audio";
 
-const pack = definePack({
-  name: "my-pack",
+const patch = definePatch({
+  name: "my-patch",
   sounds: {
     beep: {
       source: { type: "sine", frequency: 880 },
@@ -63,7 +63,7 @@ const pack = definePack({
   },
 });
 
-pack.play("beep");
+patch.play("beep");
 ```
 
 ## Patch instance
@@ -74,7 +74,7 @@ pack.play("beep");
 | `get(name)`  | `SoundDefinition \| undefined`   | Get the raw definition   |
 | `sounds`     | `string[]`                       | All sound names          |
 | `ready`      | `boolean`                        | Whether loaded           |
-| `toJSON()`   | `SoundPack`                      | Serialize back to JSON   |
+| `toJSON()`   | `SoundPatch`                     | Serialize back to JSON   |
 
 ## JSON Schema
 
@@ -84,8 +84,8 @@ Add a `$schema` property at the top of your patch JSON:
 
 ```json
 {
-  "$schema": "https://unpkg.com/@web-kits/audio/schemas/pack.schema.json",
-  "name": "my-pack",
+  "$schema": "https://unpkg.com/@web-kits/audio/schemas/patch.schema.json",
+  "name": "my-patch",
   "sounds": {
     "tap": {
       "source": { "type": "sine", "frequency": 440 },
@@ -102,16 +102,16 @@ If you're working in a monorepo and want to reference the schema locally:
 
 ```json
 {
-  "$schema": "../../../packages/legato/schemas/pack.schema.json"
+  "$schema": "../../../packages/audio/schemas/patch.schema.json"
 }
 ```
 
-### SoundPack type
+### SoundPatch type
 
-The schema validates against the `SoundPack` TypeScript type:
+The schema validates against the `SoundPatch` TypeScript type:
 
 ```ts
-type SoundPack = {
+type SoundPatch = {
   $schema?: string;
   name: string;
   author?: string;

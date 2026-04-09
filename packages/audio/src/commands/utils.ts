@@ -1,17 +1,91 @@
-import { existsSync } from "node:fs";
-import { readdir, readFile } from "node:fs/promises";
-import { isAbsolute, join, resolve } from "node:path";
+import { existsSync, mkdirSync } from "node:fs";
+import { readdir, readFile, writeFile } from "node:fs/promises";
+import { basename, isAbsolute, join, resolve } from "node:path";
+import * as p from "@clack/prompts";
 
 export const REGISTRY_BASE = "https://audio-kit.dev/api";
 
-export interface PackIndexEntry {
+// ---------------------------------------------------------------------------
+// Config — .web-kits/config.json
+// ---------------------------------------------------------------------------
+
+const CONFIG_DIR = ".web-kits";
+const CONFIG_FILE = "config.json";
+
+export interface WebKitsConfig {
+  output: string;
+}
+
+function configPath(): string {
+  return resolve(process.cwd(), CONFIG_DIR, CONFIG_FILE);
+}
+
+export function getConfig(): WebKitsConfig | null {
+  const p = configPath();
+  if (!existsSync(p)) return null;
+  try {
+    const raw = JSON.parse(
+      require("node:fs").readFileSync(p, "utf-8"),
+    ) as Record<string, unknown>;
+    if (typeof raw.output === "string") return { output: raw.output };
+  } catch {}
+  return null;
+}
+
+export async function ensureConfig(): Promise<WebKitsConfig> {
+  const existing = getConfig();
+  if (existing) return existing;
+
+  const output = await p.select({
+    message: "Where should patches be generated?",
+    options: [
+      { value: ".web-kits/audio", label: ".web-kits/audio", hint: "default" },
+      { value: "src/audio", label: "src/audio" },
+      { value: "lib/audio", label: "lib/audio" },
+      { value: "__custom__", label: "Custom path..." },
+    ],
+  });
+
+  if (p.isCancel(output)) {
+    p.cancel("Cancelled.");
+    process.exit(0);
+  }
+
+  let outputDir = output as string;
+
+  if (outputDir === "__custom__") {
+    const custom = await p.text({
+      message: "Enter output path",
+      placeholder: ".web-kits/audio",
+      validate: (v) => (v.length === 0 ? "Path is required" : undefined),
+    });
+    if (p.isCancel(custom)) {
+      p.cancel("Cancelled.");
+      process.exit(0);
+    }
+    outputDir = custom as string;
+  }
+
+  const config: WebKitsConfig = { output: outputDir };
+  const dir = resolve(process.cwd(), CONFIG_DIR);
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+  require("node:fs").writeFileSync(
+    configPath(),
+    `${JSON.stringify(config, null, 2)}\n`,
+    "utf-8",
+  );
+
+  return config;
+}
+
+export interface PatchIndexEntry {
   name: string;
   file: string;
   description: string;
   tags: string[];
 }
 
-export interface InstalledPack {
+export interface InstalledPatch {
   file: string;
   name: string;
   description?: string;
@@ -19,7 +93,7 @@ export interface InstalledPack {
   soundCount: number;
 }
 
-export interface DiscoveredPack {
+export interface DiscoveredPatch {
   name: string;
   path: string;
   downloadUrl: string;
@@ -27,12 +101,10 @@ export interface DiscoveredPack {
   soundCount: number;
 }
 
-export function getPacksDir(): string {
-  const cwd = process.cwd();
-  if (existsSync(join(cwd, "public"))) {
-    return resolve(cwd, "public", "packs");
-  }
-  return resolve(cwd, "packs");
+export function getPatchesDir(): string {
+  const config = getConfig();
+  const output = config?.output ?? ".web-kits/audio";
+  return resolve(process.cwd(), output);
 }
 
 export function parseGitHubSource(source: string): {
@@ -71,9 +143,9 @@ interface GitHubTreeItem {
   type: string;
 }
 
-export async function discoverPacksFromGitHub(
+export async function discoverPatchesFromGitHub(
   source: string,
-): Promise<DiscoveredPack[]> {
+): Promise<DiscoveredPatch[]> {
   const parsed = parseGitHubSource(source);
   if (!parsed) {
     throw new Error(
@@ -104,7 +176,7 @@ export async function discoverPacksFromGitHub(
     return true;
   });
 
-  const packs: DiscoveredPack[] = [];
+  const patches: DiscoveredPatch[] = [];
 
   for (const file of jsonFiles) {
     const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file.path}`;
@@ -112,9 +184,9 @@ export async function discoverPacksFromGitHub(
       const r = await fetch(rawUrl);
       if (!r.ok) continue;
       const data = (await r.json()) as Record<string, unknown>;
-      if (!validatePack(data)) continue;
+      if (!validatePatch(data)) continue;
 
-      packs.push({
+      patches.push({
         name: data.name,
         path: file.path,
         downloadUrl: rawUrl,
@@ -124,7 +196,7 @@ export async function discoverPacksFromGitHub(
     } catch {}
   }
 
-  return packs;
+  return patches;
 }
 
 export function isGitHubSource(source: string): boolean {
@@ -139,16 +211,16 @@ export function isLocalSource(source: string): boolean {
   return existsSync(abs);
 }
 
-export async function discoverPacksFromLocal(
+export async function discoverPatchesFromLocal(
   source: string,
-): Promise<DiscoveredPack[]> {
+): Promise<DiscoveredPatch[]> {
   const abs = isAbsolute(source) ? source : resolve(process.cwd(), source);
 
   if (abs.endsWith(".json")) {
     const raw = await readFile(abs, "utf-8");
     const data = JSON.parse(raw) as Record<string, unknown>;
-    if (!validatePack(data)) {
-      throw new Error(`${source} is not a valid sound pack.`);
+    if (!validatePatch(data)) {
+      throw new Error(`${source} is not a valid sound patch.`);
     }
     return [
       {
@@ -162,7 +234,7 @@ export async function discoverPacksFromLocal(
   }
 
   const files = await readdir(abs);
-  const packs: DiscoveredPack[] = [];
+  const patches: DiscoveredPatch[] = [];
 
   for (const file of files) {
     if (!file.endsWith(".json") || file === "index.json") continue;
@@ -170,8 +242,8 @@ export async function discoverPacksFromLocal(
       const filePath = join(abs, file);
       const raw = await readFile(filePath, "utf-8");
       const data = JSON.parse(raw) as Record<string, unknown>;
-      if (!validatePack(data)) continue;
-      packs.push({
+      if (!validatePatch(data)) continue;
+      patches.push({
         name: data.name,
         path: filePath,
         downloadUrl: filePath,
@@ -181,33 +253,33 @@ export async function discoverPacksFromLocal(
     } catch {}
   }
 
-  return packs;
+  return patches;
 }
 
-export async function fetchPackIndex(): Promise<PackIndexEntry[]> {
-  const res = await fetch(`${REGISTRY_BASE}/packs`);
+export async function fetchPatchIndex(): Promise<PatchIndexEntry[]> {
+  const res = await fetch(`${REGISTRY_BASE}/patches`);
   if (!res.ok) {
-    throw new Error(`Failed to fetch pack index: ${res.status}`);
+    throw new Error(`Failed to fetch patch index: ${res.status}`);
   }
-  return res.json() as Promise<PackIndexEntry[]>;
+  return res.json() as Promise<PatchIndexEntry[]>;
 }
 
-export async function fetchPackJson(
+export async function fetchPatchJson(
   nameOrUrl: string,
 ): Promise<Record<string, unknown>> {
   const url = nameOrUrl.startsWith("http")
     ? nameOrUrl
-    : `${REGISTRY_BASE}/pack/${nameOrUrl}`;
+    : `${REGISTRY_BASE}/patch/${nameOrUrl}`;
   const res = await fetch(url);
   if (!res.ok) {
-    throw new Error(`Failed to fetch pack: ${res.status}`);
+    throw new Error(`Failed to fetch patch: ${res.status}`);
   }
   return res.json() as Promise<Record<string, unknown>>;
 }
 
-export async function registerPack(url: string): Promise<void> {
+export async function registerPatch(url: string): Promise<void> {
   try {
-    await fetch(`${REGISTRY_BASE}/packs`, {
+    await fetch(`${REGISTRY_BASE}/patches`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url }),
@@ -217,7 +289,7 @@ export async function registerPack(url: string): Promise<void> {
   }
 }
 
-export function validatePack(
+export function validatePatch(
   data: Record<string, unknown>,
 ): data is { name: string; sounds: Record<string, unknown> } {
   return (
@@ -227,31 +299,96 @@ export function validatePack(
   );
 }
 
-export async function getInstalledPacks(): Promise<InstalledPack[]> {
-  const dir = getPacksDir();
+export async function getInstalledPatches(): Promise<InstalledPatch[]> {
+  const dir = getPatchesDir();
   if (!existsSync(dir)) return [];
 
   const files = await readdir(dir);
-  const packs: InstalledPack[] = [];
+  const patches: InstalledPatch[] = [];
 
   for (const file of files) {
-    if (!file.endsWith(".json") || file === "index.json") continue;
+    if (!file.endsWith(".ts") || file === "index.ts") continue;
     try {
       const raw = await readFile(join(dir, file), "utf-8");
-      const data = JSON.parse(raw);
-      if (validatePack(data)) {
-        packs.push({
-          file,
-          name: data.name,
-          description: (data as { description?: string }).description,
-          tags: (data as { tags?: string[] }).tags,
-          soundCount: Object.keys(data.sounds).length,
-        });
-      }
+      const nameMatch = raw.match(/^\/\/ patch: (.+)$/m);
+      const exportCount = (raw.match(/^export const /gm) ?? []).length;
+      const name = nameMatch?.[1] ?? basename(file, ".ts");
+      patches.push({
+        file,
+        name,
+        soundCount: Math.max(0, exportCount - 1),
+      });
     } catch {
-      // skip invalid files
+      // skip unreadable files
     }
   }
 
-  return packs;
+  return patches;
+}
+
+// ---------------------------------------------------------------------------
+// Module generation
+// ---------------------------------------------------------------------------
+
+const RESERVED = new Set([
+  "break", "case", "catch", "continue", "debugger", "default", "delete",
+  "do", "else", "finally", "for", "function", "if", "in", "instanceof",
+  "new", "return", "switch", "this", "throw", "try", "typeof", "var",
+  "void", "while", "with", "class", "const", "enum", "export", "extends",
+  "import", "super", "implements", "interface", "let", "package", "private",
+  "protected", "public", "static", "yield", "await",
+]);
+
+function toCamelCase(s: string): string {
+  let id = s
+    .replace(/[^a-zA-Z0-9]+(.)/g, (_, c: string) => c.toUpperCase())
+    .replace(/^[^a-zA-Z_$]/, "_$&");
+  if (RESERVED.has(id)) id = `_${id}`;
+  return id;
+}
+
+export function generateModule(data: {
+  name: string;
+  sounds: Record<string, unknown>;
+}): string {
+  const lines: string[] = [
+    `// ${data.name} — generated by @web-kits/audio (do not edit)`,
+    `// patch: ${data.name}`,
+    `import { defineSound } from "@web-kits/audio";`,
+    `import type { SoundPatch } from "@web-kits/audio";`,
+    "",
+  ];
+
+  for (const [key, def] of Object.entries(data.sounds)) {
+    const id = toCamelCase(key);
+    lines.push(
+      `export const ${id} = defineSound(${JSON.stringify(def, null, 2)});`,
+      "",
+    );
+  }
+
+  lines.push(
+    `export const _patch: SoundPatch = ${JSON.stringify(data, null, 2)};`,
+    "",
+  );
+
+  return lines.join("\n");
+}
+
+export async function regenerateIndex(dir: string): Promise<void> {
+  if (!existsSync(dir)) return;
+
+  const files = await readdir(dir);
+  const modules = files
+    .filter((f) => f.endsWith(".ts") && f !== "index.ts")
+    .map((f) => basename(f, ".ts"))
+    .sort();
+
+  const lines = [
+    "// generated by @web-kits/audio (do not edit)",
+    ...modules.map((m) => `export * as ${toCamelCase(m)} from "./${m}";`),
+    "",
+  ];
+
+  await writeFile(join(dir, "index.ts"), lines.join("\n"), "utf-8");
 }

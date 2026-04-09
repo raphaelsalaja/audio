@@ -1,6 +1,6 @@
 "use client";
 
-import { usePack } from "@web-kits/audio/react";
+import { usePatch } from "@web-kits/audio/react";
 import Link from "next/link";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { PatchSoundsByCategory, PatchWithStats } from "@/lib/patches";
@@ -21,7 +21,7 @@ export function PatchDetail({
   sounds: PatchSoundsByCategory[];
 }) {
   const [copied, setCopied] = useState(false);
-  const snippet = `loadPack("${patch.url}")`;
+  const snippet = `loadPatch("${patch.url}")`;
 
   function handleCopy() {
     navigator.clipboard.writeText(snippet);
@@ -146,7 +146,7 @@ export function PatchDetail({
       {sounds.length > 0 ? (
         <div className={styles.soundsSection}>
           <h2 className={styles.sectionTitle}>What's inside</h2>
-          <SoundDemo packName={patch.name} sounds={sounds} />
+          <SoundDemo patchName={patch.name} sounds={sounds} />
         </div>
       ) : null}
     </div>
@@ -154,20 +154,20 @@ export function PatchDetail({
 }
 
 function SoundDemo({
-  packName,
+  patchName,
   sounds,
 }: {
-  packName: string;
+  patchName: string;
   sounds: PatchSoundsByCategory[];
 }) {
-  const pack = usePack(`/api/pack/${packName}`);
+  const patch = usePatch(`/api/patch/${patchName}`);
   const [playing, setPlaying] = useState<string | null>(null);
   const voiceRef = useRef<{ stop: (t?: number) => void } | null>(null);
   const playingRef = useRef<string | null>(null);
 
   const soundSet = useMemo(
-    () => new Set(pack.sounds),
-    [pack.sounds],
+    () => new Set(patch.sounds),
+    [patch.sounds],
   );
 
   const handlePlay = useCallback(
@@ -183,11 +183,11 @@ function SoundDemo({
         return;
       }
 
-      if (!pack.ready) return;
+      if (!patch.ready) return;
 
       if (!soundSet.has(soundName)) return;
 
-      const voice = pack.play(soundName);
+      const voice = patch.play(soundName);
       voiceRef.current = voice;
       playingRef.current = soundName;
       setPlaying(soundName);
@@ -200,7 +200,7 @@ function SoundDemo({
         setPlaying((current) => (current === soundName ? null : current));
       }, 3000);
     },
-    [pack, soundSet],
+    [patch, soundSet],
   );
 
   return (
@@ -211,7 +211,7 @@ function SoundDemo({
           <div className={styles.soundGrid}>
             {group.sounds.map((sound) => {
               const isAvailable =
-                pack.ready && soundSet.has(sound.name);
+                patch.ready && soundSet.has(sound.name);
               const isPlaying = playing === sound.name;
 
               return (
@@ -222,7 +222,7 @@ function SoundDemo({
                   data-playing={isPlaying}
                   data-available={isAvailable}
                   onClick={() => handlePlay(sound.name)}
-                  disabled={!pack.ready}
+                  disabled={!patch.ready}
                 >
                   <div className={styles.soundIcon}>
                     {isPlaying ? (
@@ -262,8 +262,8 @@ function SoundDemo({
           </div>
         </div>
       ))}
-      {!pack.ready ? (
-        <p className={styles.loadingHint}>Loading pack...</p>
+      {!patch.ready ? (
+        <p className={styles.loadingHint}>Loading patch...</p>
       ) : null}
     </div>
   );

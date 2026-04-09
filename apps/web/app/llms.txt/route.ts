@@ -45,7 +45,7 @@ reverb, delay, chorus, phaser, flanger, tremolo, vibrato, bitcrusher, compressor
 
 - useSound(definition, options?) - Returns play function
 - useSequence(steps, options?) - Returns { play, stop }
-- usePack(source) - Load and play patches
+- usePatch(source) - Load and play patches
 - useAnalyser(options?) - FFT/waveform analysis
 - useListener(listener) - 3D audio listener
 - SoundProvider - Context for enabled/volume state

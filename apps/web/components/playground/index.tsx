@@ -8,15 +8,15 @@ import type { SoundDefinition } from "@web-kits/audio";
 import { defineSound, ensureReady } from "@web-kits/audio";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
-import uiEssentials from "../../../../packs/core.json";
+import patchJson from "../../../../patches/core.json";
 import styles from "./styles.module.css";
 
-type Pack = {
+type Patch = {
   name: string;
   sounds: Record<string, SoundDefinition>;
 };
 
-const pack = uiEssentials as unknown as Pack;
+const patch = patchJson as unknown as Patch;
 
 const GRID_CELLS = [
   { id: "click" },
@@ -183,7 +183,7 @@ function CellWidget({ cellId, play }: { cellId: string } & WidgetProps) {
 export function Playground() {
   const play = useCallback(async (name?: string) => {
     await ensureReady();
-    const def = pack.sounds[name ?? "click"];
+    const def = patch.sounds[name ?? "click"];
     if (!def) return;
     defineSound(def)();
   }, []);

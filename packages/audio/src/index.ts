@@ -11,7 +11,7 @@ import {
 } from "./context";
 import { render } from "./engine";
 import { bufferToWav, renderToBuffer, renderToWav } from "./offline";
-import { definePack, loadPack } from "./pack";
+import { definePatch, loadPatch } from "./patch";
 import { playSequence } from "./sequence";
 import type {
   OscillatorSource,
@@ -113,7 +113,7 @@ export function noise(
 // ---------------------------------------------------------------------------
 
 export type { AudioAnalyser } from "./analyser";
-export type { AudioPack } from "./pack";
+export type { AudioPatch } from "./patch";
 export type {
   AnalyserOptions,
   BiquadFilter,
@@ -152,7 +152,7 @@ export type {
   SequenceOptions,
   SequenceStep,
   SoundDefinition,
-  SoundPack,
+  SoundPatch,
   Source,
   StereoPanEffect,
   StreamSource,
@@ -165,13 +165,13 @@ export {
   bufferToWav,
   createAnalyser,
   createMasterAnalyser,
-  definePack,
+  definePatch,
   dispose,
   ensureReady,
   getDestination,
   getListener,
   getMasterBus,
-  loadPack,
+  loadPatch,
   renderToBuffer,
   renderToWav,
   setListener,

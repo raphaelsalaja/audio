@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const sql = neon(process.env.DATABASE_URL ?? "");
 
-interface PackJson {
+interface PatchJson {
   name: string;
   author?: string;
   version?: string;
@@ -12,7 +12,7 @@ interface PackJson {
   sounds: Record<string, unknown>;
 }
 
-function validatePack(data: unknown): data is PackJson {
+function validatePatch(data: unknown): data is PatchJson {
   if (typeof data !== "object" || data === null) return false;
   const obj = data as Record<string, unknown>;
   return (
@@ -38,14 +38,14 @@ export async function POST(request: NextRequest) {
     const res = await fetch(url);
     if (!res.ok) {
       return NextResponse.json(
-        { error: `Failed to fetch pack from URL: ${res.status}` },
+        { error: `Failed to fetch patch from URL: ${res.status}` },
         { status: 400 },
       );
     }
 
-    let packData: unknown;
+    let patchData: unknown;
     try {
-      packData = await res.json();
+      patchData = await res.json();
     } catch {
       return NextResponse.json(
         { error: "URL did not return valid JSON" },
@@ -53,21 +53,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!validatePack(packData)) {
+    if (!validatePatch(patchData)) {
       return NextResponse.json(
-        { error: "Invalid pack format: must have name and sounds" },
+        { error: "Invalid patch format: must have name and sounds" },
         { status: 400 },
       );
     }
 
-    const slug = packData.name
+    const slug = patchData.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
-    const soundCount = Object.keys(packData.sounds).length;
-    const tags = packData.tags ?? [];
-    const author = packData.author ?? "unknown";
-    const description = packData.description ?? "";
+    const soundCount = Object.keys(patchData.sounds).length;
+    const tags = patchData.tags ?? [];
+    const author = patchData.author ?? "unknown";
+    const description = patchData.description ?? "";
 
     const existing = await sql`
       SELECT id FROM patches WHERE name = ${slug}
@@ -84,12 +84,12 @@ export async function POST(request: NextRequest) {
           tags = ${tags as string[]},
           sound_count = ${soundCount},
           source_url = ${url},
-          pack_json = ${JSON.stringify(packData)}::jsonb
+          patch_json = ${JSON.stringify(patchData)}::jsonb
         WHERE id = ${patchId}
       `;
     } else {
       const inserted = await sql`
-        INSERT INTO patches (name, author, description, tags, sound_count, url, source_url, pack_json)
+        INSERT INTO patches (name, author, description, tags, sound_count, url, source_url, patch_json)
         VALUES (
           ${slug},
           ${author},
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
           ${soundCount},
           ${slug},
           ${url},
-          ${JSON.stringify(packData)}::jsonb
+          ${JSON.stringify(patchData)}::jsonb
         )
         RETURNING id
       `;
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     await sql`DELETE FROM patch_sounds WHERE patch_id = ${patchId}`;
 
-    const soundNames = Object.keys(packData.sounds);
+    const soundNames = Object.keys(patchData.sounds);
     await Promise.all(
       soundNames.map((soundName) =>
         sql`
@@ -145,7 +145,7 @@ export async function GET() {
       ORDER BY loads DESC
     `;
 
-    const packs = rows.map((row) => ({
+    const patches = rows.map((row) => ({
       name: row.name as string,
       file: `${row.name as string}.json`,
       author: row.author as string,
@@ -156,7 +156,7 @@ export async function GET() {
       loads: Number(row.loads),
     }));
 
-    return NextResponse.json(packs, {
+    return NextResponse.json(patches, {
       headers: { "Cache-Control": "public, max-age=60, s-maxage=60" },
     });
   } catch (err) {

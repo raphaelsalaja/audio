@@ -23,9 +23,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "@web-kits/audio": "./dist/bin.js"
-  },
+  "bin": "./dist/bin.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -36,7 +34,6 @@
       "default": "./dist/react.js"
     },
     "./bin": "./dist/bin.js",
-    "./schemas/pack.schema.json": "./schemas/pack.schema.json",
     "./package.json": "./package.json"
   },
   "files": [

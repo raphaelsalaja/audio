@@ -339,10 +339,10 @@ export type SequenceOptions = {
 };
 
 // ---------------------------------------------------------------------------
-// Packs
+// Patches
 // ---------------------------------------------------------------------------
 
-export type SoundPack = {
+export type SoundPatch = {
   $schema?: string;
   name: string;
   author?: string;

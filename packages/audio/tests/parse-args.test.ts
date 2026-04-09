@@ -31,9 +31,9 @@ describe("parseAddOptions", () => {
     expect(result.options.list).toBe(true);
   });
 
-  it("parses --pack flag with value", () => {
-    const result = parseAddOptions(["--pack", "core"]);
-    expect(result.options.pack).toBe("core");
+  it("parses --patch flag with value", () => {
+    const result = parseAddOptions(["--patch", "core"]);
+    expect(result.options.patch).toBe("core");
     expect(result.source).toBeUndefined();
   });
 
@@ -41,14 +41,14 @@ describe("parseAddOptions", () => {
     const result = parseAddOptions([
       "raphaelsalaja/audio-kit",
       "-y",
-      "--pack",
+      "--patch",
       "core",
       "-l",
     ]);
     expect(result.source).toBe("raphaelsalaja/audio-kit");
     expect(result.options.yes).toBe(true);
     expect(result.options.list).toBe(true);
-    expect(result.options.pack).toBe("core");
+    expect(result.options.patch).toBe("core");
   });
 
   it("returns undefined source when no positional args", () => {
@@ -64,27 +64,27 @@ describe("parseAddOptions", () => {
 });
 
 describe("parseRemoveOptions", () => {
-  it("parses pack names as positional args", () => {
+  it("parses patch names as positional args", () => {
     const result = parseRemoveOptions(["core", "minimal"]);
-    expect(result.packs).toEqual(["core", "minimal"]);
+    expect(result.patches).toEqual(["core", "minimal"]);
     expect(result.options).toEqual({});
   });
 
   it("parses --yes flag", () => {
     const result = parseRemoveOptions(["core", "--yes"]);
-    expect(result.packs).toEqual(["core"]);
+    expect(result.patches).toEqual(["core"]);
     expect(result.options.yes).toBe(true);
   });
 
   it("parses -y shorthand", () => {
     const result = parseRemoveOptions(["-y", "core"]);
-    expect(result.packs).toEqual(["core"]);
+    expect(result.patches).toEqual(["core"]);
     expect(result.options.yes).toBe(true);
   });
 
   it("handles empty args", () => {
     const result = parseRemoveOptions([]);
-    expect(result.packs).toEqual([]);
+    expect(result.patches).toEqual([]);
     expect(result.options).toEqual({});
   });
 });

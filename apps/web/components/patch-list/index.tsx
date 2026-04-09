@@ -130,7 +130,7 @@ export function PatchList({ patches }: { patches: PatchWithStats[] }) {
             ref={inputRef}
             type="text"
             className={styles.searchInput}
-            placeholder="Search packs..."
+            placeholder="Search patches..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -153,7 +153,7 @@ export function PatchList({ patches }: { patches: PatchWithStats[] }) {
       </div>
 
       {rows.length === 0 ? (
-        <div className={styles.empty}>No packs found.</div>
+        <div className={styles.empty}>No patches found.</div>
       ) : (
         <table className={styles.table}>
           <thead className={styles.thead}>

@@ -1,22 +1,22 @@
 ---
-title: usePack
+title: usePatch
 description: Load and play sounds from a patch.
 ---
 
-`usePack` loads a patch and returns a reactive patch instance. When the URL or data changes, it automatically reloads.
+`usePatch` loads a patch and returns a reactive patch instance. When the URL or data changes, it automatically reloads.
 
 ## From a URL
 
 ```tsx
-import { usePack } from "@web-kits/audio/react";
+import { usePatch } from "@web-kits/audio/react";
 
 function Toolbar() {
-  const pack = usePack("/packs/ui.json");
+  const patch = usePatch("/patches/ui.json");
 
   return (
     <div>
-      <button onClick={() => pack?.play("click")}>Click</button>
-      <button onClick={() => pack?.play("success")}>Success</button>
+      <button onClick={() => patch?.play("click")}>Click</button>
+      <button onClick={() => patch?.play("success")}>Success</button>
     </div>
   );
 }
@@ -25,7 +25,7 @@ function Toolbar() {
 ## Inline data
 
 ```tsx
-const pack = usePack({
+const patch = usePatch({
   name: "inline",
   sounds: {
     beep: {
@@ -40,9 +40,9 @@ const pack = usePack({
 ## Signature
 
 ```ts
-function usePack(
-  source: string | SoundPack
-): AudioPack | undefined;
+function usePatch(
+  source: string | SoundPatch
+): AudioPatch | undefined;
 ```
 
 Returns `undefined` while loading. The patch instance is stable across re-renders - only the internal sounds update when the source changes.

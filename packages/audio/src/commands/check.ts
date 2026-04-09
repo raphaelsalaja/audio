@@ -1,5 +1,5 @@
 import pc from "picocolors";
-import { fetchPackIndex, getInstalledPacks } from "./utils.js";
+import { fetchPatchIndex, getInstalledPatches } from "./utils.js";
 
 export async function check(_args: string[]) {
   console.log();
@@ -8,20 +8,20 @@ export async function check(_args: string[]) {
   console.log(pc.dim("Checking for updates..."));
   console.log();
 
-  const installed = await getInstalledPacks();
+  const installed = await getInstalledPatches();
 
   if (installed.length === 0) {
-    console.log(pc.dim("No packs installed."));
+    console.log(pc.dim("No patches installed."));
     console.log(
-      pc.dim(`Install packs with ${pc.reset("npx @web-kits/audio add")}`),
+      pc.dim(`Install patches with ${pc.reset("npx @web-kits/audio add")}`),
     );
     console.log();
     return;
   }
 
-  let registry: Awaited<ReturnType<typeof fetchPackIndex>>;
+  let registry: Awaited<ReturnType<typeof fetchPatchIndex>>;
   try {
-    registry = await fetchPackIndex();
+    registry = await fetchPatchIndex();
   } catch (err) {
     console.log(pc.red(`Failed to fetch registry: ${err}`));
     process.exit(1);
@@ -32,23 +32,23 @@ export async function check(_args: string[]) {
   const available: string[] = [];
   const notInRegistry: string[] = [];
 
-  for (const pack of installed) {
-    const entry = registryMap.get(pack.name.toLowerCase());
-    if (entry) {
-      available.push(pack.name);
+  for (const entry of installed) {
+    const regEntry = registryMap.get(entry.name.toLowerCase());
+    if (regEntry) {
+      available.push(entry.name);
     } else {
-      notInRegistry.push(pack.name);
+      notInRegistry.push(entry.name);
     }
   }
 
   if (available.length === 0) {
-    console.log(pc.dim("No installed packs found in the registry."));
+    console.log(pc.dim("No installed patches found in the registry."));
     console.log();
     return;
   }
 
   console.log(
-    `${pc.green("✓")} ${available.length} pack(s) can be refreshed from the registry:`,
+    `${pc.green("✓")} ${available.length} patch(es) can be refreshed from the registry:`,
   );
   console.log();
   for (const name of available) {
@@ -62,7 +62,7 @@ export async function check(_args: string[]) {
   if (notInRegistry.length > 0) {
     console.log();
     console.log(
-      pc.dim(`${notInRegistry.length} pack(s) not found in registry:`),
+      pc.dim(`${notInRegistry.length} patch(es) not found in registry:`),
     );
     for (const name of notInRegistry) {
       console.log(`  ${pc.dim("•")} ${name}`);

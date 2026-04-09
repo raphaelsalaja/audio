@@ -37,58 +37,58 @@ beep();
 click();
 ```
 
-### Sound packs (React)
+### Sound patches (React)
 
 ```tsx
-import { usePack } from "@web-kits/audio/react";
+import { usePatch } from "@web-kits/audio/react";
 
 function App() {
-  const pack = usePack("/packs/core.json");
+  const patch = usePatch("/patches/core.json");
 
   return (
-    <button onClick={() => pack.play("click")} disabled={!pack.ready}>
+    <button onClick={() => patch.play("click")} disabled={!patch.ready}>
       Click me
     </button>
   );
 }
 ```
 
-### Sound packs (vanilla)
+### Sound patches (vanilla)
 
 ```ts
-import { loadPack } from "@web-kits/audio";
+import { loadPatch } from "@web-kits/audio";
 
-const pack = await loadPack("/packs/core.json");
-pack.play("click");
+const patch = await loadPatch("/patches/core.json");
+patch.play("click");
 ```
 
 ## CLI
 
 ```bash
-# Browse and install packs from the registry
+# Browse and install patches from the registry
 npx @web-kits/audio add
 
-# Install packs from a GitHub repo
+# Install patches from a GitHub repo
 npx @web-kits/audio add user/repo
 
-# Create a new sound pack
+# Create a new sound patch
 npx @web-kits/audio init
 
-# List installed packs
+# List installed patches
 npx @web-kits/audio list
 
-# Remove installed packs
+# Remove installed patches
 npx @web-kits/audio remove
 ```
 
-## Pack authoring
+## Patch authoring
 
-Create a pack JSON file with `npx @web-kits/audio init`, then add sound definitions to the `sounds` object:
+Create a patch JSON file with `npx @web-kits/audio init`, then add sound definitions to the `sounds` object:
 
 ```json
 {
-  "$schema": "node_modules/@web-kits/audio/schemas/pack.schema.json",
-  "name": "my-pack",
+  "$schema": "node_modules/@web-kits/audio/schemas/patch.schema.json",
+  "name": "my-patch",
   "sounds": {
     "click": {
       "source": { "type": "noise", "color": "white" },
@@ -116,9 +116,9 @@ npx @web-kits/audio add your-username/your-repo
 | `square(freq, decay)` | Shorthand for square oscillator |
 | `sawtooth(freq, decay)` | Shorthand for sawtooth oscillator |
 | `noise(color, decay)` | Shorthand for noise generator |
-| `loadPack(url)` | Load a sound pack from a URL |
-| `definePack(json)` | Create a pack from a JSON object |
-| `usePack(url)` | React hook for loading and playing packs |
+| `loadPatch(url)` | Load a sound patch from a URL |
+| `definePatch(json)` | Create a patch from a JSON object |
+| `usePatch(url)` | React hook for loading and playing patches |
 
 ## Documentation
 

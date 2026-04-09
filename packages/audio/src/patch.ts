@@ -3,11 +3,11 @@ import { render } from "./engine";
 import type {
   PlayOptions,
   SoundDefinition,
-  SoundPack,
+  SoundPatch,
   VoiceHandle,
 } from "./types";
 
-export type AudioPack = {
+export type AudioPatch = {
   ready: boolean;
   name: string;
   author?: string;
@@ -17,10 +17,10 @@ export type AudioPack = {
   sounds: string[];
   play: (name: string, opts?: PlayOptions) => VoiceHandle;
   get: (name: string) => SoundDefinition | undefined;
-  toJSON: () => SoundPack;
+  toJSON: () => SoundPatch;
 };
 
-function createPackInstance(data: SoundPack): AudioPack {
+function createPatchInstance(data: SoundPatch): AudioPatch {
   const soundNames = Object.keys(data.sounds);
 
   return {
@@ -35,7 +35,7 @@ function createPackInstance(data: SoundPack): AudioPack {
     play(name: string, opts?: PlayOptions) {
       const def = data.sounds[name];
       if (!def)
-        throw new Error(`Sound "${name}" not found in pack "${data.name}"`);
+        throw new Error(`Sound "${name}" not found in patch "${data.name}"`);
       const ctx = getContext();
       return render(ctx, def, opts, undefined, getDestination());
     },
@@ -50,17 +50,17 @@ function createPackInstance(data: SoundPack): AudioPack {
   };
 }
 
-export function definePack(data: SoundPack): AudioPack {
-  return createPackInstance(data);
+export function definePatch(data: SoundPatch): AudioPatch {
+  return createPatchInstance(data);
 }
 
-export async function loadPack(source: string | SoundPack): Promise<AudioPack> {
+export async function loadPatch(source: string | SoundPatch): Promise<AudioPatch> {
   if (typeof source === "string") {
     const response = await fetch(source);
     if (!response.ok)
-      throw new Error(`Failed to load pack from ${source}: ${response.status}`);
-    const data: SoundPack = await response.json();
-    return createPackInstance(data);
+      throw new Error(`Failed to load patch from ${source}: ${response.status}`);
+    const data: SoundPatch = await response.json();
+    return createPatchInstance(data);
   }
-  return createPackInstance(source);
+  return createPatchInstance(source);
 }

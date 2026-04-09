@@ -1,4 +1,4 @@
 {
   "title": "Patches",
-  "pages": ["define-pack", "load-pack"]
+  "pages": ["define-patch", "load-patch"]
 }

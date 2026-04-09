@@ -28,30 +28,30 @@ function showBanner() {
   console.log();
   console.log(pc.bold("@web-kits/audio"));
   console.log();
-  console.log(pc.dim("Manage sound packs for your project."));
+  console.log(pc.dim("Manage sound patches for your project."));
   console.log();
   console.log(
-    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio add")} ${pc.dim("[source]")}    ${pc.dim("Install sound packs")}`,
+    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio add")} ${pc.dim("[source]")}    ${pc.dim("Install sound patches")}`,
   );
   console.log(
-    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio find")} ${pc.dim("[query]")}    ${pc.dim("Search for packs")}`,
+    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio find")} ${pc.dim("[query]")}    ${pc.dim("Search for patches")}`,
   );
   console.log(
-    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio list")}              ${pc.dim("List installed packs")}`,
+    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio list")}              ${pc.dim("List installed patches")}`,
   );
   console.log(
-    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio remove")}            ${pc.dim("Remove installed packs")}`,
+    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio remove")}            ${pc.dim("Remove installed patches")}`,
   );
   console.log();
   console.log(
     `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio check")}             ${pc.dim("Check for updates")}`,
   );
   console.log(
-    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio update")}            ${pc.dim("Update installed packs")}`,
+    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio update")}            ${pc.dim("Update installed patches")}`,
   );
   console.log();
   console.log(
-    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio init")}              ${pc.dim("Create a new sound pack")}`,
+    `  ${pc.dim("$")} ${pc.reset("npx @web-kits/audio init")}              ${pc.dim("Create a new sound patch")}`,
   );
   console.log();
   console.log(
@@ -64,23 +64,23 @@ function showHelp() {
   console.log(`
 ${pc.bold("Usage:")} @web-kits/audio <command> [options]
 
-${pc.bold("Manage Packs:")}
-  add [source]    Install sound packs
-  find [query]    Search for packs in the registry
-  list, ls        List installed packs
-  remove, rm      Remove installed packs
+${pc.bold("Manage Patches:")}
+  add [source]    Install sound patches
+  find [query]    Search for patches in the registry
+  list, ls        List installed patches
+  remove, rm      Remove installed patches
 
 ${pc.bold("Updates:")}
   check           Check for available updates
-  update          Update all installed packs
+  update          Update all installed patches
 
 ${pc.bold("Project:")}
-  init            Create a new sound pack
+  init            Create a new sound patch
 
 ${pc.bold("Add Options:")}
-  -l, --list      Preview available packs without installing
+  -l, --list      Preview available patches without installing
   -y, --yes       Skip confirmation prompts
-  --pack <name>   Install a specific pack by name
+  --patch <name>  Install a specific patch by name
 
 ${pc.bold("Remove Options:")}
   -y, --yes       Skip confirmation prompts
@@ -89,7 +89,7 @@ ${pc.bold("Source Formats:")}
   ./local/path                    Local file or directory
   owner/repo                      GitHub shorthand
   https://github.com/user/repo    Full GitHub URL
-  https://...pack.json            Direct URL to a pack file
+  https://...patch.json           Direct URL to a patch file
   ${pc.dim("(no argument)")}                   Browse the registry
 
 ${pc.bold("Options:")}
@@ -98,9 +98,9 @@ ${pc.bold("Options:")}
 
 ${pc.bold("Examples:")}
   ${pc.dim("$")} @web-kits/audio add raphaelsalaja/audio-kit
-  ${pc.dim("$")} @web-kits/audio add ./packs/
+  ${pc.dim("$")} @web-kits/audio add ./patches/
   ${pc.dim("$")} @web-kits/audio add raphaelsalaja/audio-kit --list
-  ${pc.dim("$")} @web-kits/audio add --pack core -y
+  ${pc.dim("$")} @web-kits/audio add --patch core -y
   ${pc.dim("$")} @web-kits/audio remove core -y
   ${pc.dim("$")} @web-kits/audio find ambient
   ${pc.dim("$")} @web-kits/audio check

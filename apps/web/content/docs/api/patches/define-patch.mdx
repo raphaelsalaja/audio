@@ -1,13 +1,13 @@
 ---
-title: definePack
+title: definePatch
 description: Create a patch instance from an inline object.
 ---
 
 ```ts
-import { definePack } from "@web-kits/audio";
+import { definePatch } from "@web-kits/audio";
 
-const pack = definePack({
-  name: "my-pack",
+const patch = definePatch({
+  name: "my-patch",
   sounds: {
     beep: {
       source: { type: "sine", frequency: 880 },
@@ -17,22 +17,22 @@ const pack = definePack({
   },
 });
 
-pack.play("beep");
+patch.play("beep");
 ```
 
 **Parameters:**
-- `data: SoundPack` - inline patch object
+- `data: SoundPatch` - inline patch object
 
-**Returns:** `AudioPack`
+**Returns:** `AudioPatch`
 
-## SoundPack schema
+## SoundPatch schema
 
 Patch JSON files support a `$schema` property for IDE validation:
 
 ```json
 {
-  "$schema": "https://unpkg.com/@web-kits/audio/schemas/pack.schema.json",
-  "name": "my-pack",
+  "$schema": "https://unpkg.com/@web-kits/audio/schemas/patch.schema.json",
+  "name": "my-patch",
   "sounds": { ... }
 }
 ```
