@@ -108,12 +108,14 @@ export async function POST(request: NextRequest) {
     await sql`DELETE FROM patch_sounds WHERE patch_id = ${patchId}`;
 
     const soundNames = Object.keys(packData.sounds);
-    for (const soundName of soundNames) {
-      await sql`
-        INSERT INTO patch_sounds (patch_id, name, category)
-        VALUES (${patchId}, ${soundName}, ${"sounds"})
-      `;
-    }
+    await Promise.all(
+      soundNames.map((soundName) =>
+        sql`
+          INSERT INTO patch_sounds (patch_id, name, category)
+          VALUES (${patchId}, ${soundName}, ${"sounds"})
+        `,
+      ),
+    );
 
     return NextResponse.json({
       ok: true,

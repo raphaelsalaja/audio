@@ -2,7 +2,7 @@
 
 import { usePack } from "@web-kits/audio/react";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { PatchSoundsByCategory, PatchWithStats } from "@/lib/patches";
 import styles from "./styles.module.css";
 
@@ -165,6 +165,11 @@ function SoundDemo({
   const voiceRef = useRef<{ stop: (t?: number) => void } | null>(null);
   const playingRef = useRef<string | null>(null);
 
+  const soundSet = useMemo(
+    () => new Set(pack.sounds),
+    [pack.sounds],
+  );
+
   const handlePlay = useCallback(
     (soundName: string) => {
       if (voiceRef.current) {
@@ -180,8 +185,7 @@ function SoundDemo({
 
       if (!pack.ready) return;
 
-      const available = pack.sounds;
-      if (!available.includes(soundName)) return;
+      if (!soundSet.has(soundName)) return;
 
       const voice = pack.play(soundName);
       voiceRef.current = voice;
@@ -196,7 +200,7 @@ function SoundDemo({
         setPlaying((current) => (current === soundName ? null : current));
       }, 3000);
     },
-    [pack],
+    [pack, soundSet],
   );
 
   return (
@@ -207,7 +211,7 @@ function SoundDemo({
           <div className={styles.soundGrid}>
             {group.sounds.map((sound) => {
               const isAvailable =
-                pack.ready && pack.sounds.includes(sound.name);
+                pack.ready && soundSet.has(sound.name);
               const isPlaying = playing === sound.name;
 
               return (

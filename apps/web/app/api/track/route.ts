@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
     await sql`INSERT INTO patch_loads (patch_id) VALUES (${patchId})`;
 
     return new NextResponse(null, { status: 204 });
-  } catch {
+  } catch (err) {
+    console.error("POST /api/track", err);
     return NextResponse.json(
       { error: "internal server error" },
       { status: 500 },

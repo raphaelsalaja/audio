@@ -59,7 +59,6 @@ export function SoundBuilder() {
     timeoutRef.current = setTimeout(() => setActive(false), 400);
   }, []);
 
-  // Waveform drawing
   const drawWaveform = useCallback(() => {
     const canvas = canvasRef.current;
     const analyser = analyserRef.current;
@@ -122,7 +121,6 @@ export function SoundBuilder() {
 
   return (
     <div className={styles.builder}>
-      {/* Visualizer header */}
       <div className={styles.header}>
         <div className={styles.waveform}>
           <canvas ref={canvasRef} className={styles.canvas} />
@@ -138,7 +136,6 @@ export function SoundBuilder() {
         </button>
       </div>
 
-      {/* Body: panels + code */}
       <div className={styles.body}>
         <div className={styles.panels}>
           {state.layers.map((layer, i) => (
@@ -159,7 +156,6 @@ export function SoundBuilder() {
             <PlusIcon size={12} /> Add layer
           </button>
 
-          {/* Master effects */}
           {(state.effects.length > 0 || state.layers.length > 1) && (
             <div className={styles.masterSection}>
               <EffectEditor

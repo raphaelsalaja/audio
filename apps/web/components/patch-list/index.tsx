@@ -25,7 +25,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
   if (!query.trim()) return <>{text}</>;
   const regex = new RegExp(
     `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
-    "gi",
+    "i",
   );
   const parts = text.split(regex);
   return (
@@ -43,10 +43,6 @@ function Highlight({ text, query }: { text: string; query: string }) {
     </>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Main component
-// ---------------------------------------------------------------------------
 
 export function PatchList({ patches }: { patches: PatchWithStats[] }) {
   const [query, setQuery] = useQueryState(
@@ -156,7 +152,6 @@ export function PatchList({ patches }: { patches: PatchWithStats[] }) {
         </div>
       </div>
 
-      {/* Table */}
       {rows.length === 0 ? (
         <div className={styles.empty}>No packs found.</div>
       ) : (
