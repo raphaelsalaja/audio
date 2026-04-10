@@ -11,6 +11,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@audio/*": ["../../.web-kits/*"],
+      "@web-kits/audio": ["../../packages/audio/src/index.ts"],
       "fumadocs-mdx:collections/*": [".source/*"]
     }
   },

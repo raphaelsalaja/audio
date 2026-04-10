@@ -17,7 +17,7 @@ import {
   setListener,
 } from "./context";
 import { render } from "./engine";
-import { type AudioPatch, loadPatch } from "./patch";
+import { type AudioPatch, createPatchInstance, loadPatch } from "./patch";
 import { playSequence } from "./sequence";
 import type {
   AnalyserOptions,
@@ -30,9 +30,6 @@ import type {
   VoiceHandle,
 } from "./types";
 
-// ---------------------------------------------------------------------------
-// Reduced motion (reactive via useSyncExternalStore)
-// ---------------------------------------------------------------------------
 
 function subscribeToReducedMotion(cb: () => void) {
   const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -56,9 +53,6 @@ function usePrefersReducedMotion(): boolean {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Context (state/actions split per composition patterns)
-// ---------------------------------------------------------------------------
 
 type SoundState = {
   enabled: boolean;
@@ -86,6 +80,25 @@ const SoundContext = createContext<SoundContextValue>({
   actions: NOOP_ACTIONS,
 });
 
+/**
+ * Context provider that controls global sound state for all descendant hooks.
+ *
+ * Wrap your app (or a subtree) with `<SoundProvider>` to enable
+ * {@link useSound}, {@link useSequence}, and {@link usePatch} to respect
+ * a shared enabled/volume state.
+ *
+ * @param props.enabled - Whether sounds are allowed to play. @defaultValue `true`
+ * @param props.volume - Master volume multiplier (0 – 1). @defaultValue `1`
+ * @param props.onEnabledChange - Called when a child requests an enabled change
+ * @param props.onVolumeChange - Called when a child requests a volume change
+ *
+ * @example
+ * ```tsx
+ * <SoundProvider enabled={soundsOn} volume={0.8}>
+ *   <App />
+ * </SoundProvider>
+ * ```
+ */
 export function SoundProvider({
   children,
   enabled = true,
@@ -126,10 +139,28 @@ export function SoundProvider({
   return <SoundContext value={value}>{children}</SoundContext>;
 }
 
-// ---------------------------------------------------------------------------
-// useSound — stable callback via refs (rerender-defer-reads)
-// ---------------------------------------------------------------------------
 
+/**
+ * Returns a stable callback that plays the given sound definition.
+ *
+ * Respects the nearest {@link SoundProvider}'s enabled/volume state and
+ * the user's `prefers-reduced-motion` preference. The callback reference
+ * never changes between renders (values are read from refs).
+ *
+ * @param definition - The sound to play
+ * @param opts - Default play options (can be overridden at call time)
+ * @returns A function that triggers the sound and returns a {@link VoiceHandle}, or `undefined` if muted
+ *
+ * @example
+ * ```tsx
+ * const play = useSound({
+ *   source: { type: "sine", frequency: 440 },
+ *   envelope: { decay: 0.1 },
+ * });
+ *
+ * <button onClick={play}>Beep</button>
+ * ```
+ */
 export function useSound(
   definition: SoundDefinition,
   opts?: PlayOptions,
@@ -165,10 +196,17 @@ export function useSound(
   }, []);
 }
 
-// ---------------------------------------------------------------------------
-// useSequence — stable callbacks via refs
-// ---------------------------------------------------------------------------
 
+/**
+ * Returns stable `play` and `stop` callbacks for a sound sequence.
+ *
+ * Calling `play()` starts the sequence; calling `stop()` halts it.
+ * Both callbacks are referentially stable across renders.
+ *
+ * @param steps - Ordered list of {@link SequenceStep}s
+ * @param options - Loop and duration settings
+ * @returns An object with `play` and `stop` functions
+ */
 export function useSequence(
   steps: SequenceStep[],
   options?: SequenceOptions,
@@ -209,13 +247,18 @@ export function useSequence(
     stopRef.current = null;
   }, []);
 
-  return { play, stop };
+  return useMemo(() => ({ play, stop }), [play, stop]);
 }
 
-// ---------------------------------------------------------------------------
-// useAnalyser — lazy state initialization with cleanup
-// ---------------------------------------------------------------------------
 
+/**
+ * Creates and returns an {@link AudioAnalyser} connected to the master bus.
+ *
+ * The analyser is initialized once (lazy state) and automatically disposed
+ * when the component unmounts.
+ *
+ * @param opts - FFT size, smoothing, and dB range overrides
+ */
 export function useAnalyser(opts?: AnalyserOptions): AudioAnalyser {
   const optsRef = useRef(opts);
   const [analyser] = useState(() => createMasterAnalyser(optsRef.current));
@@ -227,9 +270,6 @@ export function useAnalyser(opts?: AnalyserOptions): AudioAnalyser {
   return analyser;
 }
 
-// ---------------------------------------------------------------------------
-// usePatch — memoized wrapper with useEffect for source changes
-// ---------------------------------------------------------------------------
 
 const emptyPatch: AudioPatch = {
   ready: false,
@@ -246,10 +286,30 @@ const emptyPatch: AudioPatch = {
   },
 };
 
+/**
+ * Loads a sound patch and returns a context-aware {@link AudioPatch}.
+ *
+ * The returned patch's `play()` method automatically respects the nearest
+ * {@link SoundProvider}'s enabled/volume state and reduced-motion preference.
+ * While the patch is loading, an empty no-op patch is returned (`ready: false`).
+ *
+ * @param source - URL string or in-memory {@link SoundPatch} object
+ * @returns An `AudioPatch` (initially empty until loaded)
+ *
+ * @example
+ * ```tsx
+ * const patch = usePatch("https://example.com/ui.json");
+ *
+ * <button onClick={() => patch.play("click")}>Click</button>
+ * ```
+ */
 export function usePatch(source: string | SoundPatch): AudioPatch {
   const { state } = use(SoundContext);
   const reducedMotion = usePrefersReducedMotion();
-  const [patch, setPatch] = useState<AudioPatch | null>(null);
+
+  const [patch, setPatch] = useState<AudioPatch | null>(() =>
+    typeof source !== "string" ? createPatchInstance(source) : null,
+  );
 
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -258,6 +318,7 @@ export function usePatch(source: string | SoundPatch): AudioPatch {
   reducedMotionRef.current = reducedMotion;
 
   useEffect(() => {
+    if (typeof source !== "string") return;
     let cancelled = false;
     loadPatch(source).then((p) => {
       if (!cancelled) setPatch(p);
@@ -282,23 +343,49 @@ export function usePatch(source: string | SoundPatch): AudioPatch {
   }, [patch]);
 }
 
-// ---------------------------------------------------------------------------
-// useListener — updates on position changes via useEffect
-// ---------------------------------------------------------------------------
 
+/**
+ * Synchronizes the 3D audio listener with the given position and orientation.
+ *
+ * The effect only re-runs when individual primitive values change, not when
+ * the `listener` object reference changes.
+ *
+ * @param listener - Listener position and orientation
+ */
 export function useListener(listener: Listener): void {
+  const {
+    positionX,
+    positionY,
+    positionZ,
+    forwardX,
+    forwardY,
+    forwardZ,
+    upX,
+    upY,
+    upZ,
+  } = listener;
+
   useEffect(() => {
-    setListener(listener);
+    setListener({
+      positionX,
+      positionY,
+      positionZ,
+      forwardX,
+      forwardY,
+      forwardZ,
+      upX,
+      upY,
+      upZ,
+    });
   }, [
-    listener.positionX,
-    listener.positionY,
-    listener.positionZ,
-    listener.forwardX,
-    listener.forwardY,
-    listener.forwardZ,
-    listener.upX,
-    listener.upY,
-    listener.upZ,
-    listener,
+    positionX,
+    positionY,
+    positionZ,
+    forwardX,
+    forwardY,
+    forwardZ,
+    upX,
+    upY,
+    upZ,
   ]);
 }

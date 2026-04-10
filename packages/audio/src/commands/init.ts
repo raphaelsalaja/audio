@@ -43,7 +43,7 @@ export async function init(_args: string[]) {
     .replace(/^-|-$/g, "");
 
   const filename = `${slug}.json`;
-  const dir = resolve(process.cwd(), ".web-kits", "patches");
+  const dir = resolve(process.cwd(), ".web-kits");
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }
@@ -60,7 +60,7 @@ export async function init(_args: string[]) {
   }
 
   const patch = {
-    $schema: "node_modules/@web-kits/audio/schemas/patch.schema.json",
+    $schema: "../node_modules/@web-kits/audio/schemas/patch.schema.json",
     name: name as string,
     author: (author as string) || undefined,
     version: "1.0.0",
@@ -71,6 +71,6 @@ export async function init(_args: string[]) {
 
   await writeFile(target, `${JSON.stringify(patch, null, 2)}\n`, "utf-8");
 
-  p.log.success(`Created .web-kits/patches/${filename}`);
+  p.log.success(`Created .web-kits/${filename}`);
   p.outro("Add sounds to the `sounds` object to get started.");
 }

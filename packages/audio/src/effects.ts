@@ -17,17 +17,13 @@ import type {
   VibratoEffect,
 } from "./types";
 
-// ---------------------------------------------------------------------------
-// Wet / dry mix helper
-// ---------------------------------------------------------------------------
+type Disposable = { dispose?: () => void };
 
 function withMix(
   ctx: BaseAudioContext,
   mix: number,
-  create: (
-    input: GainNode,
-    output: GainNode,
-  ) => { dispose?: () => void } | undefined | void,
+  // biome-ignore lint/suspicious/noConfusingVoidType: callers may omit return
+  create: (input: GainNode, output: GainNode) => Disposable | void,
 ): EffectNode {
   const input = ctx.createGain();
   const output = ctx.createGain();
@@ -48,10 +44,6 @@ function withMix(
 
   return { input, output, dispose: result?.dispose };
 }
-
-// ---------------------------------------------------------------------------
-// Reverb — algorithmic impulse response with damping, preDelay, roomSize
-// ---------------------------------------------------------------------------
 
 export function createReverb(
   ctx: BaseAudioContext,
@@ -103,10 +95,6 @@ export function createReverb(
   });
 }
 
-// ---------------------------------------------------------------------------
-// Convolver — user-supplied impulse response
-// ---------------------------------------------------------------------------
-
 const irCache = new Map<string, AudioBuffer>();
 
 export function createConvolver(
@@ -141,10 +129,6 @@ export function createConvolver(
   });
 }
 
-// ---------------------------------------------------------------------------
-// Delay — feedback delay line with optional feedback filter
-// ---------------------------------------------------------------------------
-
 export function createDelay(
   ctx: BaseAudioContext,
   opts: DelayEffect,
@@ -178,10 +162,6 @@ export function createDelay(
   });
 }
 
-// ---------------------------------------------------------------------------
-// Distortion — waveshaper with tanh curve
-// ---------------------------------------------------------------------------
-
 export function createDistortion(
   ctx: BaseAudioContext,
   opts: DistortionEffect,
@@ -206,10 +186,6 @@ export function createDistortion(
     shaper.connect(wetOut);
   });
 }
-
-// ---------------------------------------------------------------------------
-// Chorus — detuned delay pair with LFO modulation
-// ---------------------------------------------------------------------------
 
 export function createChorus(
   ctx: BaseAudioContext,
@@ -257,22 +233,14 @@ export function createChorus(
       dispose() {
         try {
           lfoL.stop();
-        } catch (_) {
-          /* already stopped */
-        }
+        } catch (_) {}
         try {
           lfoR.stop();
-        } catch (_) {
-          /* already stopped */
-        }
+        } catch (_) {}
       },
     };
   });
 }
-
-// ---------------------------------------------------------------------------
-// Flanger — very short delay with LFO and feedback
-// ---------------------------------------------------------------------------
 
 export function createFlanger(
   ctx: BaseAudioContext,
@@ -310,17 +278,11 @@ export function createFlanger(
       dispose() {
         try {
           lfo.stop();
-        } catch (_) {
-          /* already stopped */
-        }
+        } catch (_) {}
       },
     };
   });
 }
-
-// ---------------------------------------------------------------------------
-// Phaser — chain of allpass filters with LFO modulation
-// ---------------------------------------------------------------------------
 
 export function createPhaser(
   ctx: BaseAudioContext,
@@ -373,17 +335,11 @@ export function createPhaser(
       dispose() {
         try {
           lfo.stop();
-        } catch (_) {
-          /* already stopped */
-        }
+        } catch (_) {}
       },
     };
   });
 }
-
-// ---------------------------------------------------------------------------
-// Tremolo — LFO modulating gain
-// ---------------------------------------------------------------------------
 
 export function createTremolo(
   ctx: BaseAudioContext,
@@ -416,16 +372,10 @@ export function createTremolo(
     dispose() {
       try {
         lfo.stop();
-      } catch (_) {
-        /* already stopped */
-      }
+    } catch (_) {}
     },
   };
 }
-
-// ---------------------------------------------------------------------------
-// Vibrato — LFO modulating a short delay line (pitch modulation)
-// ---------------------------------------------------------------------------
 
 export function createVibrato(
   ctx: BaseAudioContext,
@@ -459,16 +409,10 @@ export function createVibrato(
     dispose() {
       try {
         lfo.stop();
-      } catch (_) {
-        /* already stopped */
-      }
+    } catch (_) {}
     },
   };
 }
-
-// ---------------------------------------------------------------------------
-// Bitcrusher — reduce bit depth and optionally sample rate
-// ---------------------------------------------------------------------------
 
 export function createBitcrusher(
   ctx: BaseAudioContext,
@@ -501,10 +445,6 @@ export function createBitcrusher(
   });
 }
 
-// ---------------------------------------------------------------------------
-// Compressor
-// ---------------------------------------------------------------------------
-
 export function createCompressor(
   ctx: BaseAudioContext,
   opts: CompressorEffect,
@@ -518,10 +458,6 @@ export function createCompressor(
 
   return { input: comp, output: comp };
 }
-
-// ---------------------------------------------------------------------------
-// Parametric EQ — chain of biquad filters
-// ---------------------------------------------------------------------------
 
 export function createEQ(ctx: BaseAudioContext, opts: EQEffect): EffectNode {
   const input = ctx.createGain();
@@ -550,10 +486,6 @@ export function createEQ(ctx: BaseAudioContext, opts: EQEffect): EffectNode {
   return { input, output };
 }
 
-// ---------------------------------------------------------------------------
-// Gain — simple volume adjustment
-// ---------------------------------------------------------------------------
-
 export function createGainEffect(
   ctx: BaseAudioContext,
   opts: GainEffect,
@@ -562,10 +494,6 @@ export function createGainEffect(
   gain.gain.value = opts.value;
   return { input: gain, output: gain };
 }
-
-// ---------------------------------------------------------------------------
-// Stereo Pan — as an effect in the chain
-// ---------------------------------------------------------------------------
 
 export function createPanEffect(
   ctx: BaseAudioContext,
@@ -576,10 +504,16 @@ export function createPanEffect(
   return { input: panner, output: panner };
 }
 
-// ---------------------------------------------------------------------------
-// Factory — create any effect from its definition
-// ---------------------------------------------------------------------------
-
+/**
+ * Instantiates an {@link EffectNode} from an {@link Effect} descriptor.
+ *
+ * This is the main factory used by the engine to build effect chains.
+ * It dispatches to the appropriate `create*` function based on `effect.type`.
+ *
+ * @param ctx - The audio context to create nodes in
+ * @param effect - The effect descriptor
+ * @returns A connectable effect node with `input`, `output`, and optional `dispose`
+ */
 export function createEffect(
   ctx: BaseAudioContext,
   effect: Effect,

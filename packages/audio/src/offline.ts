@@ -6,8 +6,14 @@ import type {
 } from "./types";
 
 /**
- * Renders a sound definition to an AudioBuffer using OfflineAudioContext.
- * No speakers involved — pure offline processing.
+ * Renders a sound definition to an `AudioBuffer` using `OfflineAudioContext`.
+ *
+ * No speakers are involved — the entire render happens in memory.
+ *
+ * @param definition - The sound to render
+ * @param options - Duration, sample rate, and channel count
+ * @param playOpts - Runtime overrides (volume, detune, etc.)
+ * @returns A promise resolving to the rendered `AudioBuffer`
  */
 export async function renderToBuffer(
   definition: SoundDefinition,
@@ -26,7 +32,10 @@ export async function renderToBuffer(
 }
 
 /**
- * Encodes an AudioBuffer as a WAV Blob.
+ * Encodes an `AudioBuffer` as a 16-bit PCM WAV `Blob`.
+ *
+ * @param buffer - The audio buffer to encode
+ * @returns A `Blob` with MIME type `audio/wav`
  */
 export function bufferToWav(buffer: AudioBuffer): Blob {
   const numChannels = buffer.numberOfChannels;
@@ -79,7 +88,14 @@ function writeString(view: DataView, offset: number, str: string): void {
 }
 
 /**
- * Renders a sound and returns a downloadable WAV Blob.
+ * Convenience wrapper that renders a sound and encodes it as a WAV `Blob`.
+ *
+ * Equivalent to calling {@link renderToBuffer} followed by {@link bufferToWav}.
+ *
+ * @param definition - The sound to render
+ * @param options - Duration, sample rate, and channel count
+ * @param playOpts - Runtime overrides
+ * @returns A promise resolving to a WAV `Blob`
  */
 export async function renderToWav(
   definition: SoundDefinition,

@@ -9,15 +9,20 @@ import { defineSound, ensureReady } from "@web-kits/audio";
 import CheckIcon from "@web-kits/icons/outline/check";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
-import patchJson from "../../../../.web-kits/patches/core.json";
+import {
+  checkbox as checkboxSound,
+  click as clickSound,
+  tabSwitch,
+  tap as tapSound,
+} from "@audio/core";
 import styles from "./styles.module.css";
 
-type Patch = {
-  name: string;
-  sounds: Record<string, SoundDefinition>;
+const sounds: Record<string, SoundDefinition> = {
+  click: clickSound,
+  checkbox: checkboxSound,
+  tap: tapSound,
+  "tab-switch": tabSwitch,
 };
-
-const patch = patchJson as unknown as Patch;
 
 const GRID_CELLS = [
   { id: "click" },
@@ -165,7 +170,7 @@ function CellWidget({ cellId, play }: { cellId: string } & WidgetProps) {
 export function Playground() {
   const play = useCallback(async (name?: string) => {
     await ensureReady();
-    const def = patch.sounds[name ?? "click"];
+    const def = sounds[name ?? "click"];
     if (!def) return;
     defineSound(def)();
   }, []);

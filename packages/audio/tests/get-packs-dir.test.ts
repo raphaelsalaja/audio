@@ -23,10 +23,10 @@ describe("getPatchesDir", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("returns .web-kits/audio/ when no config exists", () => {
+  it("returns .web-kits/ when no config exists", () => {
     process.chdir(tempDir);
     const result = getPatchesDir();
-    expect(result).toBe(join(tempDir, ".web-kits", "audio"));
+    expect(result).toBe(join(tempDir, ".web-kits"));
   });
 
   it("returns custom path from .web-kits/config.json", () => {

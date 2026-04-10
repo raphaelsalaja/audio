@@ -20,9 +20,6 @@ import type {
   WavetableSource,
 } from "./types";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 const SILENCE = 0.0001;
 
@@ -35,9 +32,6 @@ function normalize(def: SoundDefinition): MultiLayerSound {
   return { layers: [def], effects: [] };
 }
 
-// ---------------------------------------------------------------------------
-// Noise generation
-// ---------------------------------------------------------------------------
 
 function generateWhiteNoise(data: Float32Array) {
   for (let i = 0; i < data.length; i++) {
@@ -100,9 +94,6 @@ function createNoiseBuffer(
   return buffer;
 }
 
-// ---------------------------------------------------------------------------
-// Sample buffer cache + loader
-// ---------------------------------------------------------------------------
 
 const sampleCache = new Map<string, AudioBuffer>();
 
@@ -120,9 +111,6 @@ async function loadSample(
   return decoded;
 }
 
-// ---------------------------------------------------------------------------
-// Source builders
-// ---------------------------------------------------------------------------
 
 type SourceResult = {
   node: AudioNode;
@@ -323,9 +311,6 @@ function buildSource(
   }
 }
 
-// ---------------------------------------------------------------------------
-// Filter builder
-// ---------------------------------------------------------------------------
 
 function buildBiquadFilter(
   ctx: BaseAudioContext,
@@ -401,9 +386,6 @@ function buildFilters(
   return arr.map((f) => buildSingleFilter(ctx, f, t));
 }
 
-// ---------------------------------------------------------------------------
-// Envelope builder (ADSR with setTargetAtTime for natural decay/release)
-// ---------------------------------------------------------------------------
 
 function _getLayerDuration(envelope?: Envelope): number {
   if (!envelope) return 0.5;
@@ -455,9 +437,6 @@ function buildEnvelope(
   return { node, duration: attack + decay + release };
 }
 
-// ---------------------------------------------------------------------------
-// LFO builder
-// ---------------------------------------------------------------------------
 
 function buildLFO(
   ctx: BaseAudioContext,
@@ -520,9 +499,6 @@ function buildLFO(
   return null;
 }
 
-// ---------------------------------------------------------------------------
-// 3D Panner builder
-// ---------------------------------------------------------------------------
 
 function buildPanner3D(ctx: BaseAudioContext, config: Panner3D): PannerNode {
   const panner = ctx.createPanner();
@@ -554,9 +530,6 @@ function buildPanner3D(ctx: BaseAudioContext, config: Panner3D): PannerNode {
   return panner;
 }
 
-// ---------------------------------------------------------------------------
-// Effects chain builder (with dispose tracking)
-// ---------------------------------------------------------------------------
 
 function buildEffectsChain(
   ctx: BaseAudioContext,
@@ -584,10 +557,21 @@ function buildEffectsChain(
   };
 }
 
-// ---------------------------------------------------------------------------
-// Render — the main entry point, returns VoiceHandle for stopping
-// ---------------------------------------------------------------------------
 
+/**
+ * Renders a {@link SoundDefinition} into the Web Audio graph and starts playback.
+ *
+ * Builds sources, filters, envelopes, LFOs, panners, and effects for every
+ * layer, connects them to `destination`, and returns a {@link VoiceHandle}
+ * that can stop the sound mid-flight.
+ *
+ * @param ctx - The `BaseAudioContext` to build nodes in
+ * @param definition - A single-layer or multi-layer sound definition
+ * @param opts - Runtime overrides (volume, pan, detune, velocity, etc.)
+ * @param baseTime - Scheduled start time in seconds (`ctx.currentTime` if omitted)
+ * @param destination - Target node to connect to (`ctx.destination` if omitted)
+ * @returns A handle with a `stop()` method for cancelling the voice
+ */
 export function render(
   ctx: BaseAudioContext,
   definition: SoundDefinition,
@@ -707,9 +691,7 @@ export function render(
         for (const n of nodesToDisconnect) {
           try {
             n.disconnect();
-          } catch (_) {
-            /* noop */
-          }
+          } catch (_) {}
         }
         for (const d of layerDisposers) d();
       };
@@ -730,9 +712,7 @@ export function render(
       for (const src of allSourceNodes) {
         try {
           src.stop(now + fade + 0.05);
-        } catch (_) {
-          /* noop */
-        }
+        } catch (_) {}
       }
     },
   };

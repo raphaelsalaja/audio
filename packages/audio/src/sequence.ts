@@ -78,6 +78,19 @@ function scheduleOnce(
   return handles;
 }
 
+/**
+ * Schedules and plays a sequence of sounds using a lookahead timer.
+ *
+ * Steps are positioned in time via `at` (absolute) or `wait` (relative)
+ * fields. When `options.loop` is true the sequence repeats indefinitely
+ * using `options.duration` as the loop length.
+ *
+ * @param ctx - The real-time `AudioContext`
+ * @param steps - Ordered list of {@link SequenceStep}s
+ * @param options - Loop and duration settings
+ * @param opts - Runtime overrides applied to every step
+ * @returns A stop function that halts playback, or `undefined` if empty
+ */
 export function playSequence(
   ctx: AudioContext,
   steps: SequenceStep[],

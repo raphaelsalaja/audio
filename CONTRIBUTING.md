@@ -38,7 +38,7 @@ pnpm lint
 packages/audio       Core library + CLI
 apps/web             Documentation site (Fumadocs)
 ui/                  Shared UI components
-.web-kits/patches/   First-party sound patches
+.web-kits/           First-party sound patches & generated code
 ```
 
 ## Making changes
@@ -112,7 +112,7 @@ See the full [Conventional Commits Cheatsheet](https://gist.github.com/qoomon/5d
 
 To contribute a first-party sound patch:
 
-1. Run `npx @web-kits/audio init` to scaffold a patch in `.web-kits/patches/`.
+1. Run `npx @web-kits/audio init` to scaffold a patch in `.web-kits/`.
 2. Follow the patch schema and add sound definitions.
 3. Include well-named, well-tuned sound definitions.
 4. Open a PR with a brief description of the patch.
