@@ -60,7 +60,7 @@
   @typography 12, 550;
 }
 
-@media (width <= 768px) {
+@media (width <= 1120px) {
   .toc {
     display: none;
   }

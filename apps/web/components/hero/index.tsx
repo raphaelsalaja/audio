@@ -2,6 +2,7 @@
 
 import type { SoundDefinition } from "@web-kits/audio";
 import { defineSound, ensureReady } from "@web-kits/audio";
+import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import styles from "./styles.module.css";
 
@@ -187,9 +188,9 @@ export function Hero() {
       </div>
 
       <div className={styles.links}>
-        <a href="/" className={styles.linkPrimary}>
+        <Link href="/" className={styles.linkPrimary}>
           Documentation
-        </a>
+        </Link>
         <a href="#patches" className={styles.linkSecondary}>
           Browse patches
         </a>

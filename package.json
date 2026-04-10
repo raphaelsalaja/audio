@@ -10,13 +10,13 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.9",
+    "@biomejs/biome": "2.4.11",
     "@changesets/cli": "^2.30.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "husky": "^9.1.7",
     "prettier": "^3.8.1",
-    "turbo": "^2.8.21",
+    "turbo": "^2.9.5",
     "typescript": "^6.0.2"
   },
   "packageManager": "pnpm@9.15.4"

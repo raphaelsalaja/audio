@@ -118,7 +118,6 @@
 
 .metaLink:hover {
   color: var(--gray-12);
-  text-decoration: underline;
 }
 
 .tags {

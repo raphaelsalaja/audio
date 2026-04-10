@@ -35,3 +35,4 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 .env*.local
+apps/web/next-env.d.ts

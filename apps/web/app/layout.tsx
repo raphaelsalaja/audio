@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactNode } from "react";
+import { DrawerShell } from "@/components/drawer-shell";
+import { SidebarSlotProvider } from "@/components/sidebar-slot";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TopNav } from "@/components/top-nav";
 import "@/styles/index.css";
@@ -44,8 +46,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Analytics />
           <SpeedInsights />
           <ThemeProvider>
-            <TopNav />
-            {children}
+            <SidebarSlotProvider>
+              <DrawerShell>
+                <TopNav />
+                {children}
+              </DrawerShell>
+            </SidebarSlotProvider>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

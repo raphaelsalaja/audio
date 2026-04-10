@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { MobileHeader } from "@/components/mobile-header";
 import {
   SidebarAside,
   SidebarNav,
   SidebarRoot,
   SidebarTree,
 } from "@/components/sidebar";
+import { SidebarSlotSetter } from "@/components/sidebar-slot";
 import { source } from "@/lib/source";
 import styles from "./layout.module.css";
 
@@ -21,7 +21,11 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
           </SidebarNav>
         </SidebarAside>
       </SidebarRoot>
-      <MobileHeader tree={tree} />
+      <SidebarSlotSetter>
+        <SidebarNav>
+          <SidebarTree tree={tree} />
+        </SidebarNav>
+      </SidebarSlotSetter>
       {children}
     </main>
   );

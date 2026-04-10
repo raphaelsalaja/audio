@@ -98,7 +98,7 @@ ${pc.bold("Options:")}
 
 ${pc.bold("Examples:")}
   ${pc.dim("$")} @web-kits/audio add raphaelsalaja/audio-kit
-  ${pc.dim("$")} @web-kits/audio add ./patches/
+  ${pc.dim("$")} @web-kits/audio add ./.web-kits/patches/
   ${pc.dim("$")} @web-kits/audio add raphaelsalaja/audio-kit --list
   ${pc.dim("$")} @web-kits/audio add --patch core -y
   ${pc.dim("$")} @web-kits/audio remove core -y

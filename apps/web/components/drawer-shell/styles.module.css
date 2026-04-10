@@ -1,0 +1,28 @@
+.root {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+.indentBackground {
+  position: fixed;
+  inset: 0;
+  background: black;
+}
+
+.indent {
+  position: relative;
+  min-height: 100dvh;
+  background: var(--gray-1);
+  transform-origin: center top;
+  transition:
+    scale 0.4s cubic-bezier(0.32, 0.72, 0, 1),
+    border-radius 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.indent[data-active] {
+  overflow: hidden;
+  border-radius: 12px;
+  scale: 0.94;
+}

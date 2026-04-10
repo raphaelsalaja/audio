@@ -67,7 +67,7 @@ npx @web-kits/audio list
 packages/audio       Core library + CLI (published to npm)
 apps/web             Documentation, registry, and homepage
 ui/                  Shared UI components
-patches/             First-party sound patches
+.web-kits/patches/   First-party sound patches
 ```
 
 ## Documentation

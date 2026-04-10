@@ -1,0 +1,60 @@
+.skeleton {
+  display: block;
+  background: var(--gray-a3);
+  border-radius: 4px;
+}
+
+.toolbar {
+  display: flex;
+  padding: 12px 0;
+}
+
+.search {
+  composes: skeleton;
+  width: 100%;
+  height: 32px;
+  border-radius: var(--radius-small);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-a4);
+}
+
+.thSkeleton {
+  composes: skeleton;
+  width: 60px;
+  height: 12px;
+}
+
+.thSkeleton[data-align="right"] {
+  margin-left: auto;
+}
+
+.row {
+  border-bottom: 1px solid var(--gray-a3);
+}
+
+.td {
+  padding: 12px;
+}
+
+.nameSkeleton {
+  composes: skeleton;
+  height: 13px;
+  background: var(--gray-a2);
+}
+
+.numSkeleton {
+  composes: skeleton;
+  width: 32px;
+  height: 13px;
+  margin-left: auto;
+  background: var(--gray-a2);
+}

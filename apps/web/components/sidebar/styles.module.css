@@ -276,7 +276,7 @@
   overflow-y: auto;
 }
 
-@media (width <= 768px) {
+@media (width <= 1024px) {
   .sidebar {
     display: none;
   }

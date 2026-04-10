@@ -95,8 +95,112 @@
   background: var(--gray-a3);
 }
 
+/* ------------------------------------------------------------------ */
+/*  Menu button (mobile only)                                          */
+/* ------------------------------------------------------------------ */
+
+.menuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--gray-11);
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: var(--radius-small);
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.menuButton:hover {
+  color: var(--gray-12);
+  background: var(--gray-a3);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Drawer (bottom sheet with indent effect)                           */
+/* ------------------------------------------------------------------ */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 41;
+  pointer-events: none;
+}
+
+.popup {
+  --sidebar-item-height: 28px;
+
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  max-height: 80dvh;
+  pointer-events: auto;
+  background: var(--gray-1);
+  border-top: 1px solid var(--gray-a3);
+  border-radius: 12px 12px 0 0;
+  transform: translateY(var(--drawer-swipe-movement-y));
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  @typography 12, 400;
+}
+
+.popup[data-starting-style],
+.popup[data-ending-style] {
+  transform: translateY(100%);
+}
+
+.popup[data-swiping] {
+  transition-duration: 0ms;
+}
+
+.handle {
+  display: flex;
+  flex-shrink: 0;
+  width: 32px;
+  height: 4px;
+  margin: 12px auto 0;
+  background: var(--gray-a5);
+  border-radius: 9999px;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Responsive                                                         */
+/* ------------------------------------------------------------------ */
+
+@media (width <= 1024px) {
+  .menuButton {
+    display: flex;
+  }
+
+  .iconLink {
+    display: none;
+  }
+}
+
 @media (width <= 768px) {
-  .links {
+  .logoText {
     display: none;
   }
 }

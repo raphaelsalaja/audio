@@ -233,22 +233,54 @@
 /*  Responsive                                                         */
 /* ------------------------------------------------------------------ */
 
-@media (max-width: 480px) {
+@media (max-width: 1024px) {
   .grid {
-    gap: 12px;
+    grid-template-columns: repeat(1, 1fr);
   }
 
   .cell {
-    min-height: 140px;
-    padding: 28px 20px;
+    min-height: 120px;
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  .widgetButton {
+    height: 36px;
+    padding: 0 20px;
+    @typography 14, 600;
+  }
+
+  .widgetSliderRoot {
+    max-width: 160px;
+  }
+
+  .widgetCheckboxLabel {
+    @typography 13, 500;
   }
 
   .widgetTab {
+    height: 30px;
     padding: 0 10px;
     @typography 12, 500;
   }
 
+  .widgetTabsRoot {
+    max-width: 220px;
+  }
+
   .widgetTabsList {
     border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cell {
+    min-height: 100px;
+    padding: 20px 14px;
+    border-radius: 14px;
   }
 }

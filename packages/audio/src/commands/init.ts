@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import * as p from "@clack/prompts";
@@ -43,7 +43,11 @@ export async function init(_args: string[]) {
     .replace(/^-|-$/g, "");
 
   const filename = `${slug}.json`;
-  const target = resolve(process.cwd(), filename);
+  const dir = resolve(process.cwd(), ".web-kits", "patches");
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+  }
+  const target = resolve(dir, filename);
 
   if (existsSync(target)) {
     const overwrite = await p.confirm({
@@ -67,6 +71,6 @@ export async function init(_args: string[]) {
 
   await writeFile(target, `${JSON.stringify(patch, null, 2)}\n`, "utf-8");
 
-  p.log.success(`Created ${filename}`);
+  p.log.success(`Created .web-kits/patches/${filename}`);
   p.outro("Add sounds to the `sounds` object to get started.");
 }

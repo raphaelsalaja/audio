@@ -1,5 +1,5 @@
 {
-  "$schema": "../packages/audio/schemas/patch.schema.json",
+  "$schema": "../../packages/audio/schemas/patch.schema.json",
   "name": "Playful",
   "author": "Raphael Salaja",
   "version": "1.0.0",
