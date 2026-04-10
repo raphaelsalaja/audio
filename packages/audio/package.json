@@ -65,6 +65,7 @@
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
+    "@types/node": "^25.2.3",
     "@types/react": "^19.0.0",
     "bunchee": "latest",
     "react": "^19.0.0",
