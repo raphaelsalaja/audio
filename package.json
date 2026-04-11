@@ -5,6 +5,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint && prettier --write \"**/*.mdx\"",
+    "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "publish-packages": "turbo run build lint && changeset version && changeset publish",
     "prepare": "husky"
