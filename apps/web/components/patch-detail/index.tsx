@@ -1,6 +1,7 @@
 "use client";
 
-import { usePatch } from "@web-kits/audio/react";
+import { usePatch, useSound } from "@web-kits/audio/react";
+import { click, copy as copySfx } from "@audio/core";
 import Link from "next/link";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { PatchSoundsByCategory, PatchWithStats } from "@/lib/patches";
@@ -22,16 +23,19 @@ export function PatchDetail({
 }) {
   const [copied, setCopied] = useState(false);
   const snippet = `loadPatch("${patch.url}")`;
+  const playClick = useSound(click);
+  const playCopy = useSound(copySfx);
 
   function handleCopy() {
     navigator.clipboard.writeText(snippet);
+    playCopy();
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
   return (
     <div className={styles.container}>
-      <Link href="/library" className={styles.back}>
+      <Link href="/library" className={styles.back} onClick={playClick}>
         <svg
           width="14"
           height="14"

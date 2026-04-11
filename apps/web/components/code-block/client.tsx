@@ -1,6 +1,8 @@
 "use client";
 
 import { Tabs as BaseTabs } from "@base-ui/react/tabs";
+import { useSound } from "@web-kits/audio/react";
+import { copy, tabSwitch } from "@audio/core";
 import Check from "@web-kits/icons/outline/check";
 import Clone from "@web-kits/icons/outline/clone";
 import BunIcon from "@web-kits/icons/social-media/bun";
@@ -30,14 +32,16 @@ const iconProps = {
 
 export function CopyButton({ text }: { text: string | (() => string) }) {
   const [copied, setCopied] = useState(false);
+  const playCopy = useSound(copy);
 
   const onCopy = useCallback(() => {
     const value = typeof text === "function" ? text() : text;
     if (!value) return;
     navigator.clipboard.writeText(value);
+    playCopy();
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }, [text]);
+  }, [text, playCopy]);
 
   return (
     <button
@@ -125,12 +129,16 @@ export function TabsClient({ items }: { items: TabItemWithTokens[] }) {
   const [active, setActive] = useState(items[0]?.label ?? "");
   const activeItem = items.find((item) => item.label === active);
   const { ref: scrollRef, fade } = useScrollFade<HTMLDivElement>();
+  const playTabSwitch = useSound(tabSwitch);
 
   return (
     <BaseTabs.Root
       className={styles.root}
       value={active}
-      onValueChange={(value) => setActive(String(value))}
+      onValueChange={(value) => {
+        playTabSwitch();
+        setActive(String(value));
+      }}
     >
       <BaseTabs.List className={styles.list}>
         {items.map((item) => (

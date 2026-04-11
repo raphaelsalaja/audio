@@ -1,11 +1,13 @@
 "use client";
 
 import { DrawerPreview as Drawer } from "@base-ui/react/drawer";
+import { useSound } from "@web-kits/audio/react";
 import Github from "@web-kits/icons/social-media/github";
 import XTwitter from "@web-kits/icons/social-media/x-twitter";
+import { click, drawerOpen, drawerClose } from "@audio/core";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useDrawerPortalContainer } from "@/components/drawer-shell";
 import { SidebarRoot } from "@/components/sidebar";
 import { useSidebarSlot } from "@/components/sidebar-slot";
@@ -32,6 +34,11 @@ export function TopNav() {
   const [open, setOpen] = useState(false);
   const closeDrawer = useCallback(() => setOpen(false), []);
 
+  const playClick = useSound(click);
+  const playDrawerOpen = useSound(drawerOpen);
+  const playDrawerClose = useSound(drawerClose);
+  const wasOpenRef = useRef(open);
+
   return (
     <nav className={styles.nav}>
       <div className={styles.inner}>
@@ -45,6 +52,7 @@ export function TopNav() {
               key={link.href}
               href={link.href}
               className={`${styles.link} ${link.match(pathname) ? styles.active : ""}`}
+              onClick={playClick}
             >
               {link.label}
             </Link>
@@ -52,7 +60,16 @@ export function TopNav() {
         </div>
         <div className={styles.actions}>
           {sidebarContent && (
-            <Drawer.Root open={open} onOpenChange={setOpen} modal={false}>
+            <Drawer.Root
+              open={open}
+              onOpenChange={(next) => {
+                setOpen(next);
+                if (next && !wasOpenRef.current) playDrawerOpen();
+                if (!next && wasOpenRef.current) playDrawerClose();
+                wasOpenRef.current = next;
+              }}
+              modal={false}
+            >
               <Drawer.Trigger className={styles.menuButton} aria-label="Menu">
                 <MenuIcon open={open} />
               </Drawer.Trigger>
@@ -77,6 +94,7 @@ export function TopNav() {
             rel="noopener noreferrer"
             className={styles.iconLink}
             aria-label="Twitter"
+            onClick={playClick}
           >
             <XTwitter width={15} height={15} />
           </a>
@@ -86,6 +104,7 @@ export function TopNav() {
             rel="noopener noreferrer"
             className={styles.iconLink}
             aria-label="GitHub"
+            onClick={playClick}
           >
             <Github width={15} height={15} />
           </a>

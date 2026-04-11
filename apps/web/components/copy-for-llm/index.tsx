@@ -1,6 +1,8 @@
 "use client";
 
 import { Menu } from "@base-ui/react/menu";
+import { useSound } from "@web-kits/audio/react";
+import { copy as copySfx, dropdownOpen, dropdownClose } from "@audio/core";
 import Check from "@web-kits/icons/outline/check";
 import ChevronDown from "@web-kits/icons/outline/chevron-down";
 import Clone from "@web-kits/icons/outline/clone";
@@ -8,7 +10,7 @@ import Markdown from "@web-kits/icons/outline/markdown";
 import { Calligraph } from "calligraph";
 import { AnimatePresence, motion } from "motion/react";
 import { usePathname } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import styles from "./styles.module.css";
 
 const cache = new Map<string, Promise<string>>();
@@ -28,6 +30,10 @@ export function CopyForLLM() {
   const pathname = usePathname();
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const playCopy = useSound(copySfx);
+  const playDropdownOpen = useSound(dropdownOpen);
+  const playDropdownClose = useSound(dropdownClose);
+  const menuOpenRef = useRef(false);
 
   const markdownUrl = `${pathname}.mdx`;
 
@@ -46,12 +52,13 @@ export function CopyForLLM() {
       cache.set(markdownUrl, promise);
       const text = await promise;
       await navigator.clipboard.writeText(text);
+      playCopy();
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } finally {
       setLoading(false);
     }
-  }, [markdownUrl]);
+  }, [markdownUrl, playCopy]);
 
   return (
     <div className={styles.container}>
@@ -79,7 +86,13 @@ export function CopyForLLM() {
           {copied ? "Copied" : "Copy for LLM"}
         </Calligraph>
       </button>
-      <Menu.Root>
+      <Menu.Root
+        onOpenChange={(open) => {
+          if (open && !menuOpenRef.current) playDropdownOpen();
+          if (!open && menuOpenRef.current) playDropdownClose();
+          menuOpenRef.current = open;
+        }}
+      >
         <Menu.Trigger className={styles.trigger}>
           <ChevronDown
             width={12}

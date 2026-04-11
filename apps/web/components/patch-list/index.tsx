@@ -8,6 +8,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import { useSound } from "@web-kits/audio/react";
+import { tap } from "@audio/core";
 import Magnifier from "@web-kits/icons/outline/magnifier";
 import Xmark from "@web-kits/icons/outline/xmark";
 import Link from "next/link";
@@ -52,6 +54,7 @@ export function PatchList({ patches }: { patches: PatchWithStats[] }) {
       .withOptions({ shallow: true, throttleMs: 300 }),
   );
   const inputRef = useRef<HTMLInputElement>(null);
+  const playTap = useSound(tap);
 
   function clearQuery() {
     setQuery("");
@@ -69,6 +72,7 @@ export function PatchList({ patches }: { patches: PatchWithStats[] }) {
           <Link
             href={`/library/${row.original.name}`}
             className={styles.nameLink}
+            onClick={playTap}
           >
             <span className={styles.name}>
               <Highlight text={row.original.name} query={query} />
@@ -93,7 +97,7 @@ export function PatchList({ patches }: { patches: PatchWithStats[] }) {
         meta: { align: "right" as const },
       },
     ],
-    [query],
+    [query, playTap],
   );
 
   const table = useReactTable({

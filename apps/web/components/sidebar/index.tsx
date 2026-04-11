@@ -1,6 +1,8 @@
 "use client";
 
 import ArrowUpRight from "@web-kits/icons/outline/arrow-up-right";
+import { useSound } from "@web-kits/audio/react";
+import { tap, expand, collapse } from "@audio/core";
 import type {
   Folder,
   Item,
@@ -84,10 +86,16 @@ function SidebarLink({
   const { pathname, onNavigate } = useSidebar();
   const active = pathname === href;
   const entry = getIconEntry(href);
+  const playTap = useSound(tap);
+
+  const handleClick = () => {
+    playTap();
+    onNavigate?.();
+  };
 
   if (entry?.external) {
     return (
-      <Link href={href} className={styles.externalLink} onClick={onNavigate}>
+      <Link href={href} className={styles.externalLink} onClick={handleClick}>
         <span className={styles.externalLinkLeft}>
           <entry.icon width={14} height={14} className={styles.icon} />
           {children}
@@ -102,7 +110,7 @@ function SidebarLink({
     <Link
       href={href}
       className={`${styles.link} ${active ? styles.active : ""}`}
-      onClick={onNavigate}
+      onClick={handleClick}
     >
       {entry && (
         <entry.icon
@@ -133,6 +141,8 @@ function SidebarFolder({
   children: React.ReactNode;
 }) {
   const { pathname, onNavigate } = useSidebar();
+  const playExpand = useSound(expand);
+  const playCollapse = useSound(collapse);
 
   const folderPath = href ? href.replace(/\/[^/]+$/, "") : undefined;
   const isActive = folderPath
@@ -191,6 +201,7 @@ function SidebarFolder({
             href={href}
             className={styles.folderLabelLink}
             onClick={() => {
+              if (!open) playExpand();
               setOpen(true);
               onNavigate?.();
             }}
@@ -204,6 +215,8 @@ function SidebarFolder({
             aria-label={`${open ? "Collapse" : "Expand"} ${name}`}
             onClick={(e) => {
               e.preventDefault();
+              if (open) playCollapse();
+              else playExpand();
               setOpen((v) => !v);
             }}
           >
@@ -214,7 +227,11 @@ function SidebarFolder({
         <button
           type="button"
           className={`${styles.folderLabel} ${isActive ? styles.folderLabelActive : ""}`}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (open) playCollapse();
+            else playExpand();
+            setOpen((v) => !v);
+          }}
         >
           {labelText}
           {chevron}

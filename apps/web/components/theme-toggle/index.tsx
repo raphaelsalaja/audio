@@ -1,5 +1,7 @@
 "use client";
 
+import { useSound } from "@web-kits/audio/react";
+import { toggleOn, toggleOff } from "@audio/core";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
@@ -7,6 +9,8 @@ import styles from "./styles.module.css";
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const playToggleOn = useSound(toggleOn);
+  const playToggleOff = useSound(toggleOff);
 
   useEffect(() => setMounted(true), []);
 
@@ -18,7 +22,11 @@ export function ThemeToggle() {
     <button
       type="button"
       className={styles.toggle}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={() => {
+        if (isDark) playToggleOff();
+        else playToggleOn();
+        setTheme(isDark ? "light" : "dark");
+      }}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       <svg

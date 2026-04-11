@@ -1,5 +1,7 @@
 "use client";
 
+import { useSound } from "@web-kits/audio/react";
+import { tick } from "@audio/core";
 import type { TOCItemType } from "fumadocs-core/toc";
 import {
   createContext,
@@ -179,6 +181,7 @@ function TOCLink({ item }: { item: TOCItemType }) {
   const { state, meta } = useTOC();
   const id = item.url.slice(1);
   const isActive = state.activeIds.has(id);
+  const playTick = useSound(tick);
 
   return (
     <li ref={meta.registerItem(id)}>
@@ -187,6 +190,7 @@ function TOCLink({ item }: { item: TOCItemType }) {
         data-active={isActive || undefined}
         className={styles.link}
         style={{ paddingLeft: `${(item.depth - 2) * 12 + 12}px` }}
+        onClick={playTick}
       >
         {item.title}
       </a>
