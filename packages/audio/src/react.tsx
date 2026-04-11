@@ -30,7 +30,6 @@ import type {
   VoiceHandle,
 } from "./types";
 
-
 function subscribeToReducedMotion(cb: () => void) {
   const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
   mql.addEventListener("change", cb);
@@ -52,7 +51,6 @@ function usePrefersReducedMotion(): boolean {
     getReducedMotionServerSnapshot,
   );
 }
-
 
 type SoundState = {
   enabled: boolean;
@@ -139,7 +137,6 @@ export function SoundProvider({
   return <SoundContext value={value}>{children}</SoundContext>;
 }
 
-
 /**
  * Returns a stable callback that plays the given sound definition.
  *
@@ -196,7 +193,6 @@ export function useSound(
   }, []);
 }
 
-
 /**
  * Returns stable `play` and `stop` callbacks for a sound sequence.
  *
@@ -250,7 +246,6 @@ export function useSequence(
   return useMemo(() => ({ play, stop }), [play, stop]);
 }
 
-
 /**
  * Creates and returns an {@link AudioAnalyser} connected to the master bus.
  *
@@ -269,7 +264,6 @@ export function useAnalyser(opts?: AnalyserOptions): AudioAnalyser {
 
   return analyser;
 }
-
 
 const emptyPatch: AudioPatch = {
   ready: false,
@@ -342,7 +336,6 @@ export function usePatch(source: string | SoundPatch): AudioPatch {
     };
   }, [patch]);
 }
-
 
 /**
  * Synchronizes the 3D audio listener with the given position and orientation.

@@ -5,7 +5,6 @@ import * as p from "@clack/prompts";
 
 export const REGISTRY_BASE = "https://audio.raphaelsalaja.com/api";
 
-
 const CONFIG_DIR = ".web-kits";
 const CONFIG_FILE = "config.json";
 
@@ -281,8 +280,7 @@ export async function registerPatch(url: string): Promise<void> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url }),
     });
-  } catch {
-  }
+  } catch {}
 }
 
 export function validatePatch(
@@ -314,13 +312,11 @@ export async function getInstalledPatches(): Promise<InstalledPatch[]> {
         name,
         soundCount: Math.max(0, exportCount - 1),
       });
-    } catch {
-    }
+    } catch {}
   }
 
   return patches;
 }
-
 
 const RESERVED = new Set([
   "break",

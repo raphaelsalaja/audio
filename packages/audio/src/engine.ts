@@ -20,7 +20,6 @@ import type {
   WavetableSource,
 } from "./types";
 
-
 const SILENCE = 0.0001;
 
 function isMultiLayer(def: SoundDefinition): def is MultiLayerSound {
@@ -31,7 +30,6 @@ function normalize(def: SoundDefinition): MultiLayerSound {
   if (isMultiLayer(def)) return def;
   return { layers: [def], effects: [] };
 }
-
 
 function generateWhiteNoise(data: Float32Array) {
   for (let i = 0; i < data.length; i++) {
@@ -94,7 +92,6 @@ function createNoiseBuffer(
   return buffer;
 }
 
-
 const sampleCache = new Map<string, AudioBuffer>();
 
 async function loadSample(
@@ -110,7 +107,6 @@ async function loadSample(
   sampleCache.set(url, decoded);
   return decoded;
 }
-
 
 type SourceResult = {
   node: AudioNode;
@@ -311,7 +307,6 @@ function buildSource(
   }
 }
 
-
 function buildBiquadFilter(
   ctx: BaseAudioContext,
   filter: BiquadFilter,
@@ -386,7 +381,6 @@ function buildFilters(
   return arr.map((f) => buildSingleFilter(ctx, f, t));
 }
 
-
 function _getLayerDuration(envelope?: Envelope): number {
   if (!envelope) return 0.5;
   const attack = envelope.attack ?? 0;
@@ -436,7 +430,6 @@ function buildEnvelope(
 
   return { node, duration: attack + decay + release };
 }
-
 
 function buildLFO(
   ctx: BaseAudioContext,
@@ -499,7 +492,6 @@ function buildLFO(
   return null;
 }
 
-
 function buildPanner3D(ctx: BaseAudioContext, config: Panner3D): PannerNode {
   const panner = ctx.createPanner();
   panner.panningModel = config.panningModel ?? "HRTF";
@@ -530,7 +522,6 @@ function buildPanner3D(ctx: BaseAudioContext, config: Panner3D): PannerNode {
   return panner;
 }
 
-
 function buildEffectsChain(
   ctx: BaseAudioContext,
   effects: Effect[],
@@ -556,7 +547,6 @@ function buildEffectsChain(
     },
   };
 }
-
 
 /**
  * Renders a {@link SoundDefinition} into the Web Audio graph and starts playback.

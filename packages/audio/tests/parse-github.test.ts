@@ -13,9 +13,7 @@ describe("parseGitHubSource", () => {
   });
 
   it("parses full GitHub URL", () => {
-    const result = parseGitHubSource(
-      "https://github.com/raphaelsalaja/audio",
-    );
+    const result = parseGitHubSource("https://github.com/raphaelsalaja/audio");
     expect(result).toEqual({
       owner: "raphaelsalaja",
       repo: "audio",
@@ -71,9 +69,7 @@ describe("isGitHubSource", () => {
   });
 
   it("returns true for GitHub URL", () => {
-    expect(isGitHubSource("https://github.com/raphaelsalaja/audio")).toBe(
-      true,
-    );
+    expect(isGitHubSource("https://github.com/raphaelsalaja/audio")).toBe(true);
   });
 
   it("returns false for a URL that is not GitHub", () => {

@@ -372,7 +372,7 @@ export function createTremolo(
     dispose() {
       try {
         lfo.stop();
-    } catch (_) {}
+      } catch (_) {}
     },
   };
 }
@@ -409,7 +409,7 @@ export function createVibrato(
     dispose() {
       try {
         lfo.stop();
-    } catch (_) {}
+      } catch (_) {}
     },
   };
 }

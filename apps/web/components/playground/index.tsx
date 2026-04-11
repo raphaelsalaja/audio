@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  checkbox as checkboxSound,
+  click as clickSound,
+  tabSwitch,
+  tap as tapSound,
+} from "@audio/core";
 import { Button } from "@base-ui/react/button";
 import { Checkbox } from "@base-ui/react/checkbox";
 import { Slider } from "@base-ui/react/slider";
@@ -9,12 +15,6 @@ import { defineSound, ensureReady } from "@web-kits/audio";
 import CheckIcon from "@web-kits/icons/outline/check";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useRef, useState } from "react";
-import {
-  checkbox as checkboxSound,
-  click as clickSound,
-  tabSwitch,
-  tap as tapSound,
-} from "@audio/core";
 import styles from "./styles.module.css";
 
 const sounds: Record<string, SoundDefinition> = {

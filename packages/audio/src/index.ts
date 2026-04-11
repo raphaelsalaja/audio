@@ -22,7 +22,6 @@ import type {
   VoiceHandle,
 } from "./types";
 
-
 /**
  * Binds a {@link SoundDefinition} into a reusable play function.
  *
@@ -83,7 +82,6 @@ export function defineSequence(
     return playSequence(ctx, steps, options, opts);
   };
 }
-
 
 type OscType = OscillatorSource["type"];
 
@@ -178,7 +176,6 @@ export function noise(
     gain,
   });
 }
-
 
 export type { AudioAnalyser } from "./analyser";
 export type { AudioPatch } from "./patch";
