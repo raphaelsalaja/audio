@@ -4,7 +4,7 @@ import { Field } from "@base-ui/react";
 import MagnifierSlash from "@web-kits/icons/fill/magnifier-slash";
 import Magnifier from "@web-kits/icons/outline/magnifier";
 import { parseAsString, useQueryState } from "nuqs";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import type { PatchWithStats } from "@/lib/patches";
 import { Card } from "../card";
 import styles from "./styles.module.css";
@@ -33,6 +33,7 @@ export function View({ patches }: { patches: PatchWithStats[] }) {
       <Field.Root className={styles.search}>
         <Magnifier className={styles.icon} strokewidth={2} aria-hidden="true" />
         <Field.Control
+          autoComplete="off"
           placeholder="Search..."
           className={styles.control}
           onValueChange={(value) => setQuery(value)}

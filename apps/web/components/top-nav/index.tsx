@@ -3,6 +3,7 @@
 import { click, drawerClose, drawerOpen } from "@audio/core";
 import { DrawerPreview as Drawer } from "@base-ui/react/drawer";
 import { useSound } from "@web-kits/audio/react";
+import HotDrink from "@web-kits/icons/fill/hot-drink";
 import Github from "@web-kits/icons/social-media/github";
 import XTwitter from "@web-kits/icons/social-media/x-twitter";
 import Link from "next/link";
@@ -107,6 +108,16 @@ export function TopNav() {
             onClick={playClick}
           >
             <Github width={15} height={15} />
+          </a>
+          <a
+            href="https://buymeacoffee.com/raphaelsalaja"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.iconLink}
+            aria-label="Buy Me a Coffee"
+            onClick={playClick}
+          >
+            <HotDrink width={15} height={15} />
           </a>
           <ThemeToggle />
         </div>

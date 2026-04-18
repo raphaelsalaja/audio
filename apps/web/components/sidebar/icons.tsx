@@ -1,3 +1,4 @@
+import HotDrink from "@web-kits/icons/fill/hot-drink";
 import Atom from "@web-kits/icons/fill-duo/atom";
 import CircleWaveformLines from "@web-kits/icons/fill-duo/circle-waveform-lines";
 import ClockRotateClockwise from "@web-kits/icons/fill-duo/clock-rotate-clockwise";
@@ -153,6 +154,11 @@ const iconMap: Record<string, IconEntry> = {
     color: "var(--red-9)",
     external: true,
     tag: "v0.0.6",
+  },
+  "/resources/buy-me-a-coffee": {
+    icon: HotDrink,
+    color: "var(--amber-9)",
+    external: true,
   },
 
   "/library": { icon: Music, color: "var(--violet-9)" },

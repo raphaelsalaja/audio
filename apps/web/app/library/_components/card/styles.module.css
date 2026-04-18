@@ -1,10 +1,10 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-/* preview button */
+/* preview area */
 
 .preview {
   position: relative;
@@ -14,14 +14,19 @@
   width: 100%;
   padding-block: 48px;
   overflow: hidden;
-  background: var(--ds-gray-a2);
+  background: var(--color-a2);
   border-radius: var(--radius-medium);
+  transition: background 0.2s ease;
+
+  &[data-playing] {
+    background: var(--color-a3);
+  }
 }
 
 .canvas {
-  --vis-color-low: var(--green-7);
-  --vis-color-mid: var(--amber-9);
-  --vis-color-high: var(--red-11);
+  --vis-color-low: var(--color-7);
+  --vis-color-mid: var(--color-9);
+  --vis-color-high: var(--color-11);
   position: absolute;
   inset: 0;
   width: 100%;
@@ -38,7 +43,7 @@
   padding: 0;
   color: white;
   cursor: pointer;
-  background: var(--black-a8);
+  background: var(--color-a8);
   border: none;
   border-radius: 999px;
   backdrop-filter: blur(8px);
@@ -47,7 +52,7 @@
     background 0.15s ease;
 
   &:hover {
-    background: var(--black-a10);
+    background: var(--color-a10);
     transform: scale(1.08);
   }
 
@@ -56,7 +61,7 @@
   }
 
   &[data-playing] {
-    background: var(--black-a10);
+    background: var(--color-a10);
   }
 }
 
@@ -69,32 +74,34 @@
   justify-content: space-between;
 }
 
-.name {
-  color: var(--ds-gray-12);
-  text-transform: capitalize;
-  text-decoration: none;
-  @typography 14, 550;
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 
-  &:hover {
-    text-decoration: underline;
+  .name {
+    color: var(--ds-gray-12);
+    text-transform: capitalize;
+    @typography 12, 550;
+  }
+
+  .author {
+    color: var(--ds-gray-10);
+    text-transform: capitalize;
+    @typography 12;
   }
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
 .button {
+  flex-shrink: 0;
   padding: 4px 12px;
-  color: var(--ds-gray-1);
+  color: var(--ds-gray-12);
   text-decoration: none;
-  background: var(--ds-gray-12);
   border-radius: 8px;
+  box-shadow: var(--shadow-2);
   transition: all 0.2s ease;
 
-  @typography 14, 550;
+  @typography 13, 550;
 
   &:hover {
     opacity: 0.85;

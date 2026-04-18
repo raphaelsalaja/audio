@@ -1,8 +1,8 @@
 .layout {
   display: flex;
-  max-width: var(--body-width);
+  max-width: var(--layout-width);
   min-height: 100dvh;
-  padding: 0 var(--page-padding);
+
   margin: 0 auto;
 }
 

@@ -3,9 +3,11 @@
 import { loadPatch } from "@web-kits/audio";
 import MediaPause from "@web-kits/icons/fill/media-pause";
 import MediaPlay from "@web-kits/icons/fill/media-play";
-import { motion } from "motion/react";
+import { generateRadixColorsScaleFromName } from "@web-kits/ui/lib/colors";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useVisualizer } from "@/components/controls/visualizer";
 import type { PatchWithStats } from "@/lib/patches";
 import styles from "./styles.module.css";
@@ -63,6 +65,12 @@ export function Card({ patch }: CardProps) {
     [patch.name, startVis, stopVis],
   );
 
+  const colorVars = useMemo(
+    () =>
+      generateRadixColorsScaleFromName(patch.name) as Record<string, string>,
+    [patch.name],
+  );
+
   const MotionPause = motion(MediaPause);
   const MotionPlay = motion(MediaPlay);
 
@@ -75,7 +83,7 @@ export function Card({ patch }: CardProps) {
   };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} style={colorVars as CSSProperties}>
       <div className={styles.preview} data-playing={playing || undefined}>
         <canvas ref={canvasRef} className={styles.canvas} />
         <motion.button
@@ -85,12 +93,15 @@ export function Card({ patch }: CardProps) {
           onClick={handlePlay}
           aria-label={playing ? "Stop preview" : "Preview sound"}
         >
-          {playing ? <MotionPause {...props} /> : <MotionPlay {...props} />}
+          <AnimatePresence mode="wait" initial={false}>
+            {playing ? <MotionPause {...props} /> : <MotionPlay {...props} />}
+          </AnimatePresence>
         </motion.button>
       </div>
       <div className={styles.footer}>
-        <Link href={`/library/${patch.name}`} className={styles.name}>
-          {patch.name}
+        <Link href={`/library/${patch.name}`} className={styles.details}>
+          <span className={styles.name}> {patch.name}</span>
+          <span className={styles.author}>{patch.author}</span>
         </Link>
         <Link href={`/library/${patch.name}`} className={styles.button}>
           View

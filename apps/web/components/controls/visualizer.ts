@@ -51,15 +51,11 @@ export function useVisualizer(
       const gap = 2;
       const barWidth = (w - gap * (barCount - 1)) / barCount;
       const style = getComputedStyle(canvas);
-      const flat =
-        style.getPropertyValue("--vis-color").trim() || "";
-      const colorLow =
-        style.getPropertyValue("--vis-color-low").trim() || "";
+      const flat = style.getPropertyValue("--vis-color").trim() || "";
+      const colorLow = style.getPropertyValue("--vis-color-low").trim() || "";
       const useGradient = !!colorLow;
-      const colorMid =
-        style.getPropertyValue("--vis-color-mid").trim() || "";
-      const colorHigh =
-        style.getPropertyValue("--vis-color-high").trim() || "";
+      const colorMid = style.getPropertyValue("--vis-color-mid").trim() || "";
+      const colorHigh = style.getPropertyValue("--vis-color-high").trim() || "";
 
       let hasSignal = false;
 

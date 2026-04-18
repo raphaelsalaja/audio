@@ -52,6 +52,11 @@ const config = {
         destination: "https://npmjs.com/package/@web-kits/audio",
         permanent: false,
       },
+      {
+        source: "/resources/buy-me-a-coffee",
+        destination: "https://buymeacoffee.com/raphaelsalaja",
+        permanent: false,
+      },
     ];
   },
 };
