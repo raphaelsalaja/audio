@@ -95,14 +95,20 @@ function SidebarLink({
 
   if (entry?.external) {
     return (
-      <Link href={href} className={styles.externalLink} onClick={handleClick}>
+      <a
+        href={entry.href ?? href}
+        className={styles.externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handleClick}
+      >
         <span className={styles.externalLinkLeft}>
           <entry.icon width={14} height={14} className={styles.icon} />
           {children}
           {entry.tag && <span className={styles.tag}>{entry.tag}</span>}
         </span>
         <ArrowUpRight width={12} height={12} className={styles.externalArrow} />
-      </Link>
+      </a>
     );
   }
 

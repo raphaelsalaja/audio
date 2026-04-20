@@ -38,22 +38,22 @@ const config = {
   async redirects() {
     return [
       {
-        source: "/resources/github",
+        source: "/github",
         destination: "https://github.com/raphaelsalaja/audio",
         permanent: false,
       },
       {
-        source: "/resources/twitter",
+        source: "/twitter",
         destination: "https://twitter.com/raphaelsalaja",
         permanent: false,
       },
       {
-        source: "/resources/npm",
+        source: "/npm",
         destination: "https://npmjs.com/package/@web-kits/audio",
         permanent: false,
       },
       {
-        source: "/resources/buy-me-a-coffee",
+        source: "/buy-me-a-coffee",
         destination: "https://buymeacoffee.com/raphaelsalaja",
         permanent: false,
       },

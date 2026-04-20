@@ -30,6 +30,7 @@ interface IconEntry {
   icon: IconComponent;
   color: string;
   external?: boolean;
+  href?: string;
   tag?: string;
 }
 
@@ -145,22 +146,26 @@ const iconMap: Record<string, IconEntry> = {
     icon: Github,
     color: "var(--ds-gray-9)",
     external: true,
+    href: "https://github.com/raphaelsalaja/audio",
   },
   "/twitter": {
     icon: XTwitter,
     color: "var(--ds-gray-9)",
     external: true,
+    href: "https://twitter.com/raphaelsalaja",
   },
   "/npm": {
     icon: Download,
     color: "var(--red-9)",
     external: true,
+    href: "https://npmjs.com/package/@web-kits/audio",
     tag: "v0.0.6",
   },
   "/buy-me-a-coffee": {
     icon: HotDrink,
     color: "var(--amber-9)",
     external: true,
+    href: "https://buymeacoffee.com/raphaelsalaja",
   },
 
   "/library": { icon: Music, color: "var(--violet-9)" },
