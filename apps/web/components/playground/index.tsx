@@ -33,10 +33,6 @@ const GRID_CELLS = [
 
 const spring = { type: "spring", stiffness: 500, damping: 25 } as const;
 
-/* ------------------------------------------------------------------ */
-/*  Widget components                                                  */
-/* ------------------------------------------------------------------ */
-
 type WidgetProps = {
   play: (name?: string) => void;
 };
@@ -144,10 +140,6 @@ function ButtonWidget({ play }: WidgetProps) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Cell renderer                                                      */
-/* ------------------------------------------------------------------ */
-
 function CellWidget({ cellId, play }: { cellId: string } & WidgetProps) {
   switch (cellId) {
     case "checkbox":
@@ -162,10 +154,6 @@ function CellWidget({ cellId, play }: { cellId: string } & WidgetProps) {
       return null;
   }
 }
-
-/* ------------------------------------------------------------------ */
-/*  Playground                                                         */
-/* ------------------------------------------------------------------ */
 
 export function Playground() {
   const play = useCallback(async (name?: string) => {

@@ -93,8 +93,6 @@ function useActiveItems(ids: string[]) {
   return activeIds;
 }
 
-// --- Compound components ---
-
 function TOCProvider({
   toc,
   children,
@@ -197,8 +195,6 @@ function TOCLink({ item }: { item: TOCItemType }) {
     </li>
   );
 }
-
-// --- Public API ---
 
 export const TOC = {
   Provider: TOCProvider,

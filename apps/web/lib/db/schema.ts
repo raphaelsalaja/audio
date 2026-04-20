@@ -38,7 +38,6 @@ export const patches = pgTable(
       .defaultNow()
       .notNull(),
 
-    // new metadata
     version: text(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()

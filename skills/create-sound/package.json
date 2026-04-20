@@ -1,0 +1,13 @@
+{
+  "name": "@web-kits/skill-create-sound",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cursor agent skill: generate a SoundDefinition for @web-kits/audio from a prompt or audio file.",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "validate": "node src/validate.mjs",
+    "extract-tests": "node src/extract-tests.mjs",
+    "dev": "node src/build.mjs && node src/validate.mjs"
+  }
+}

@@ -1,0 +1,1023 @@
+{
+  "generated": true,
+  "count": 30,
+  "cases": [
+    {
+      "id": "effect-bandpass-noise-swoosh",
+      "kind": "prompt",
+      "section": "effect",
+      "title": "Bandpass noise swoosh - filter envelope is the gesture",
+      "prompt": "swoosh transition",
+      "expected": {
+        "source": {
+          "type": "noise",
+          "color": "white"
+        },
+        "filter": {
+          "type": "bandpass",
+          "frequency": 300,
+          "resonance": 1.8,
+          "envelope": {
+            "attack": 0.01,
+            "peak": 4000,
+            "decay": 0.08
+          }
+        },
+        "envelope": {
+          "attack": 0.01,
+          "decay": 0.12,
+          "sustain": 0,
+          "release": 0.04
+        },
+        "gain": 0.12
+      }
+    },
+    {
+      "id": "effect-bitcrush-lofi",
+      "kind": "prompt",
+      "section": "effect",
+      "title": "Bitcrusher - retro / lofi finish",
+      "prompt": "bitcrushed beep",
+      "expected": {
+        "source": {
+          "type": "square",
+          "frequency": {
+            "start": 800,
+            "end": 1200
+          }
+        },
+        "filter": {
+          "type": "lowpass",
+          "frequency": 3000
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.08,
+          "sustain": 0,
+          "release": 0.02
+        },
+        "effects": [
+          {
+            "type": "bitcrusher",
+            "bits": 8,
+            "sampleRateReduction": 4,
+            "mix": 1
+          }
+        ],
+        "gain": 0.18
+      }
+    },
+    {
+      "id": "effect-fm-bell",
+      "kind": "prompt",
+      "section": "effect",
+      "title": "FM bell - high ratio, high depth",
+      "prompt": "bell sound",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 880,
+          "fm": {
+            "ratio": 3.5,
+            "depth": 250
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.5,
+          "sustain": 0.04,
+          "release": 0.2
+        },
+        "gain": 0.16
+      }
+    },
+    {
+      "id": "effect-lowpass-warmth",
+      "kind": "prompt",
+      "section": "effect",
+      "title": "Lowpass warmth - the safest filter to add",
+      "prompt": "warm sine",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300
+        },
+        "filter": {
+          "type": "lowpass",
+          "frequency": 2500
+        },
+        "envelope": {
+          "decay": 0.012,
+          "release": 0.004
+        },
+        "gain": 0.18
+      }
+    },
+    {
+      "id": "effect-reverb-tail",
+      "kind": "prompt",
+      "section": "effect",
+      "title": "Reverb tail - small space, low mix",
+      "prompt": "click with reverb",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 60
+          }
+        },
+        "envelope": {
+          "decay": 0.012,
+          "release": 0.004
+        },
+        "effects": [
+          {
+            "type": "reverb",
+            "decay": 0.4,
+            "damping": 0.5,
+            "mix": 0.12
+          }
+        ],
+        "gain": 0.18
+      }
+    },
+    {
+      "id": "event-click",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Click - sine + low FM, very short decay",
+      "prompt": "click",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": {
+            "start": 200,
+            "end": 700
+          },
+          "fm": {
+            "ratio": 0.5,
+            "depth": 80
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.06,
+          "sustain": 0,
+          "release": 0.02
+        },
+        "gain": 0.25
+      }
+    },
+    {
+      "id": "event-complete",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Complete - four-note ascending arpeggio",
+      "prompt": "complete",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 523
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.35,
+              "sustain": 0.05,
+              "release": 0.1
+            },
+            "gain": 0.15
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 659
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.35,
+              "sustain": 0.05,
+              "release": 0.1
+            },
+            "delay": 0.015,
+            "gain": 0.13
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 784
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.35,
+              "sustain": 0.05,
+              "release": 0.1
+            },
+            "delay": 0.03,
+            "gain": 0.12
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": {
+                "start": 1046,
+                "end": 1175
+              }
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.3,
+              "sustain": 0.04,
+              "release": 0.12
+            },
+            "delay": 0.045,
+            "gain": 0.1
+          }
+        ]
+      }
+    },
+    {
+      "id": "event-error",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Error - layered sawtooth + square with descending sweep",
+      "prompt": "error",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sawtooth",
+              "frequency": {
+                "start": 320,
+                "end": 140
+              }
+            },
+            "filter": {
+              "type": "lowpass",
+              "frequency": 1200
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.25,
+              "sustain": 0,
+              "release": 0.08
+            },
+            "gain": 0.22
+          },
+          {
+            "source": {
+              "type": "square",
+              "frequency": {
+                "start": 180,
+                "end": 80
+              }
+            },
+            "filter": {
+              "type": "lowpass",
+              "frequency": 800
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.2,
+              "sustain": 0,
+              "release": 0.06
+            },
+            "delay": 0.03,
+            "gain": 0.12
+          }
+        ]
+      }
+    },
+    {
+      "id": "event-modal-close",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Modal-close - downward sine sweep",
+      "prompt": "modal close",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": {
+            "start": 730,
+            "end": 430
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.08,
+          "sustain": 0,
+          "release": 0.025
+        },
+        "gain": 0.08
+      }
+    },
+    {
+      "id": "event-modal-open",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Modal-open - upward sine sweep",
+      "prompt": "modal open",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": {
+            "start": 430,
+            "end": 1400
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.08,
+          "sustain": 0,
+          "release": 0.025
+        },
+        "gain": 0.1
+      }
+    },
+    {
+      "id": "event-notification",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Notification - FM-rich sine with light reverb",
+      "prompt": "notification",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 780,
+              "fm": {
+                "ratio": 1.5,
+                "depth": 150
+              }
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.4,
+              "sustain": 0.04,
+              "release": 0.15
+            },
+            "effects": [
+              {
+                "type": "reverb",
+                "decay": 0.6,
+                "damping": 0.6,
+                "mix": 0.12
+              }
+            ],
+            "gain": 0.16
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 1170,
+              "fm": {
+                "ratio": 1.5,
+                "depth": 120
+              }
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.35,
+              "sustain": 0.03,
+              "release": 0.15
+            },
+            "delay": 0.1,
+            "effects": [
+              {
+                "type": "reverb",
+                "decay": 0.6,
+                "damping": 0.6,
+                "mix": 0.12
+              }
+            ],
+            "gain": 0.14
+          }
+        ]
+      }
+    },
+    {
+      "id": "event-success",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Success - ascending three-note sine chord",
+      "prompt": "success",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 523
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.3,
+              "sustain": 0.06,
+              "release": 0.1
+            },
+            "gain": 0.16
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 659
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.28,
+              "sustain": 0.05,
+              "release": 0.1
+            },
+            "delay": 0.07,
+            "gain": 0.14
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": {
+                "start": 784,
+                "end": 880
+              }
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.32,
+              "sustain": 0.06,
+              "release": 0.12
+            },
+            "delay": 0.14,
+            "gain": 0.15
+          }
+        ]
+      }
+    },
+    {
+      "id": "event-swoosh",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Swoosh - white noise through a sweeping bandpass",
+      "prompt": "swoosh",
+      "expected": {
+        "source": {
+          "type": "noise",
+          "color": "white"
+        },
+        "filter": {
+          "type": "bandpass",
+          "frequency": 300,
+          "resonance": 1.8,
+          "envelope": {
+            "attack": 0.01,
+            "peak": 4000,
+            "decay": 0.08
+          }
+        },
+        "envelope": {
+          "attack": 0.01,
+          "decay": 0.12,
+          "sustain": 0,
+          "release": 0.04
+        },
+        "gain": 0.12
+      }
+    },
+    {
+      "id": "event-tap",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Tap - static high sine + FM, ultra short",
+      "prompt": "tap",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 100
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.015,
+          "sustain": 0,
+          "release": 0.005
+        },
+        "gain": 0.2
+      }
+    },
+    {
+      "id": "event-tick",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Tick - faintest possible sine",
+      "prompt": "tick",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1500,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 60
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.01,
+          "sustain": 0,
+          "release": 0.004
+        },
+        "gain": 0.15
+      }
+    },
+    {
+      "id": "event-toggle",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Toggle - paired sines with delay (direction matters)",
+      "prompt": "toggle on",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 2093
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.012,
+              "sustain": 0,
+              "release": 0.004
+            },
+            "gain": 0.2
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 3136
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.012,
+              "sustain": 0,
+              "release": 0.004
+            },
+            "delay": 0.025,
+            "gain": 0.2
+          }
+        ]
+      }
+    },
+    {
+      "id": "event-whoosh",
+      "kind": "prompt",
+      "section": "event",
+      "title": "Whoosh - longer, slower swoosh for full-page transitions",
+      "prompt": "whoosh",
+      "expected": {
+        "source": {
+          "type": "noise",
+          "color": "white"
+        },
+        "filter": {
+          "type": "bandpass",
+          "frequency": 300,
+          "resonance": 1.5,
+          "envelope": {
+            "attack": 0.04,
+            "peak": 4000,
+            "decay": 0.16
+          }
+        },
+        "envelope": {
+          "attack": 0.02,
+          "decay": 0.25,
+          "sustain": 0,
+          "release": 0.08
+        },
+        "gain": 0.15
+      }
+    },
+    {
+      "id": "layer-ascending-chord",
+      "kind": "prompt",
+      "section": "layer",
+      "title": "Ascending chord - 3-4 layers with cascading delay",
+      "prompt": "ascending chord success",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 523
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.3,
+              "sustain": 0.06,
+              "release": 0.1
+            },
+            "gain": 0.16
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 659
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.28,
+              "sustain": 0.05,
+              "release": 0.1
+            },
+            "delay": 0.07,
+            "gain": 0.14
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": {
+                "start": 784,
+                "end": 880
+              }
+            },
+            "envelope": {
+              "attack": 0.003,
+              "decay": 0.32,
+              "sustain": 0.06,
+              "release": 0.12
+            },
+            "delay": 0.14,
+            "gain": 0.15
+          }
+        ]
+      }
+    },
+    {
+      "id": "layer-click-plus-body",
+      "kind": "prompt",
+      "section": "layer",
+      "title": "Click + body - transient layer over a sustained tone",
+      "prompt": "click with body",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 4000,
+              "fm": {
+                "ratio": 0.5,
+                "depth": 200
+              }
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.008,
+              "sustain": 0,
+              "release": 0.003
+            },
+            "gain": 0.15
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": {
+                "start": 200,
+                "end": 80
+              }
+            },
+            "envelope": {
+              "attack": 0,
+              "decay": 0.12,
+              "sustain": 0,
+              "release": 0.05
+            },
+            "gain": 0.18
+          }
+        ]
+      }
+    },
+    {
+      "id": "layer-octave-pair",
+      "kind": "prompt",
+      "section": "layer",
+      "title": "Octave pair - two layers an octave apart with delay",
+      "prompt": "two-layer toggle",
+      "expected": {
+        "layers": [
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 1046
+            },
+            "envelope": {
+              "decay": 0.012,
+              "release": 0.004
+            },
+            "gain": 0.2
+          },
+          {
+            "source": {
+              "type": "sine",
+              "frequency": 2093
+            },
+            "envelope": {
+              "decay": 0.012,
+              "release": 0.004
+            },
+            "delay": 0.025,
+            "gain": 0.18
+          }
+        ]
+      }
+    },
+    {
+      "id": "layer-single",
+      "kind": "prompt",
+      "section": "layer",
+      "title": "Single layer - emit Layer directly",
+      "prompt": "single layer click",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 60
+          }
+        },
+        "envelope": {
+          "decay": 0.012,
+          "release": 0.004
+        },
+        "gain": 0.18
+      }
+    },
+    {
+      "id": "mood-airy",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Airy - noise source + bandpass with high peak",
+      "prompt": "airy whoosh",
+      "expected": {
+        "source": {
+          "type": "noise",
+          "color": "white"
+        },
+        "filter": {
+          "type": "bandpass",
+          "frequency": 600,
+          "resonance": 1.2,
+          "envelope": {
+            "attack": 0.04,
+            "peak": 5000,
+            "decay": 0.18
+          }
+        },
+        "envelope": {
+          "attack": 0.03,
+          "decay": 0.25,
+          "sustain": 0,
+          "release": 0.08
+        },
+        "gain": 0.1
+      }
+    },
+    {
+      "id": "mood-bright",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Bright - no lowpass, optional FM sparkle",
+      "prompt": "bright click",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 2.5,
+            "depth": 50
+          }
+        },
+        "envelope": {
+          "decay": 0.012,
+          "release": 0.004
+        },
+        "gain": 0.18
+      }
+    },
+    {
+      "id": "mood-glassy",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Glassy - high FM ratio + reverb",
+      "prompt": "glassy ding",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 880,
+          "fm": {
+            "ratio": 3.5,
+            "depth": 250
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.5,
+          "sustain": 0.04,
+          "release": 0.2
+        },
+        "effects": [
+          {
+            "type": "reverb",
+            "decay": 0.7,
+            "damping": 0.5,
+            "mix": 0.15
+          }
+        ],
+        "gain": 0.16
+      }
+    },
+    {
+      "id": "mood-lofi",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Lo-fi - bitcrusher + lowpass",
+      "prompt": "lofi click",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 60
+          }
+        },
+        "filter": {
+          "type": "lowpass",
+          "frequency": 1500
+        },
+        "envelope": {
+          "decay": 0.012,
+          "release": 0.004
+        },
+        "effects": [
+          {
+            "type": "bitcrusher",
+            "bits": 6,
+            "mix": 0.8
+          }
+        ],
+        "gain": 0.2
+      }
+    },
+    {
+      "id": "mood-metallic",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Metallic - inharmonic FM ratio",
+      "prompt": "metallic badge",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1100,
+          "fm": {
+            "ratio": 2.76,
+            "depth": 350
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.35,
+          "sustain": 0.04,
+          "release": 0.15
+        },
+        "gain": 0.16
+      }
+    },
+    {
+      "id": "mood-organic",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Organic - triangle + slight detune + light reverb",
+      "prompt": "organic pop",
+      "expected": {
+        "source": {
+          "type": "triangle",
+          "frequency": {
+            "start": 400,
+            "end": 150
+          },
+          "detune": 5
+        },
+        "envelope": {
+          "attack": 0.005,
+          "decay": 0.1,
+          "sustain": 0,
+          "release": 0.04
+        },
+        "effects": [
+          {
+            "type": "reverb",
+            "decay": 0.3,
+            "mix": 0.08
+          }
+        ],
+        "gain": 0.2
+      }
+    },
+    {
+      "id": "mood-punchy",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Punchy - zero attack, very short decay",
+      "prompt": "punchy click",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 60
+          }
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.04,
+          "sustain": 0,
+          "release": 0.01
+        },
+        "gain": 0.25
+      }
+    },
+    {
+      "id": "mood-retro",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Retro - square or sawtooth + lowpass + bitcrusher",
+      "prompt": "retro coin",
+      "expected": {
+        "source": {
+          "type": "square",
+          "frequency": {
+            "start": 800,
+            "end": 1200
+          }
+        },
+        "filter": {
+          "type": "lowpass",
+          "frequency": 3000
+        },
+        "envelope": {
+          "attack": 0,
+          "decay": 0.08,
+          "sustain": 0,
+          "release": 0.02
+        },
+        "effects": [
+          {
+            "type": "bitcrusher",
+            "bits": 8,
+            "sampleRateReduction": 4,
+            "mix": 1
+          }
+        ],
+        "gain": 0.18
+      }
+    },
+    {
+      "id": "mood-warm",
+      "kind": "prompt",
+      "section": "mood",
+      "title": "Warm - lowpass + light reverb",
+      "prompt": "warm click",
+      "expected": {
+        "source": {
+          "type": "sine",
+          "frequency": 1300,
+          "fm": {
+            "ratio": 0.5,
+            "depth": 60
+          }
+        },
+        "filter": {
+          "type": "lowpass",
+          "frequency": 2500
+        },
+        "envelope": {
+          "decay": 0.012,
+          "release": 0.004
+        },
+        "effects": [
+          {
+            "type": "reverb",
+            "decay": 0.4,
+            "mix": 0.1
+          }
+        ],
+        "gain": 0.18
+      }
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+---
+title: create-sound skill
+description: Cursor agent skill that generates a SoundDefinition from a prompt, an audio file, or both.
+---
+
+`create-sound` is a [Cursor agent skill](https://docs.cursor.com/agent/skills) that lives at [`skills/create-sound/`](https://github.com/raphaelsalaja/audio/tree/main/skills/create-sound). When the user asks the agent to design a UI sound — by prompt, by sharing a WAV/MP3 sprite, or both — the skill walks a knowledge base of small markdown rules and emits a typed [`SoundDefinition`](/docs/api/sounds/define-sound) ready to paste into a `.web-kits/<patch>.ts` file.
+
+The skill mirrors the [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices) layout: each rule is its own short markdown file in `rules/`, and a build step compiles them into a single `SKILL.md` that Cursor autoloads.
+
+## When it triggers
+
+The skill description matches on:
+
+- "create a sound", "/create-sound", "design a sound for X"
+- A shared `*.wav`, `*.mp3`, `*.flac`, `*.ogg`, or sprite manifest
+- "reverse-engineer this sample", "interpret this sound"
+
+## Two input paths
+
+```
+prompt only      -> event/mood/layer/effect rules -> SoundDefinition
+audio only       -> interpret-* rules (FFT)       -> SoundDefinition
+prompt + audio   -> interpret-* then refine with prompt
+```
+
+When the user shares audio, the FFT pipeline produces a measured `SoundDefinition` first; if a prompt is also present, the prompt acts as a refinement layer ("make this warmer", "shorten the decay"). When only a prompt is present, the interpret rules are skipped.
+
+## Sections
+
+The `rules/` directory groups files by filename prefix. Each section is one chapter in the generated `SKILL.md`.
+
+| Prefix       | Section                                            |
+| ------------ | -------------------------------------------------- |
+| `pipeline-`  | Generation pipeline (procedural steps)             |
+| `interpret-` | FFT analysis sub-steps for the audio path          |
+| `event-`     | UI event recipes (click, tap, success, error, ...) |
+| `mood-`      | Mood / adjective vocabulary (warm, glassy, lofi)   |
+| `layer-`     | Layering patterns (single, octave pair, chord)     |
+| `effect-`    | Effect recipes (reverb tail, FM bell, bitcrush)    |
+| `validate-`  | Output validation (gain budget, frequency bounds)  |
+
+The current rule set ships 48 short rules (10–40 lines each), all grounded in real shapes from [`packages/audio/src/types.ts`](https://github.com/raphaelsalaja/audio/blob/main/packages/audio/src/types.ts) and templates lifted from [`.web-kits/core.ts`](https://github.com/raphaelsalaja/audio/blob/main/.web-kits/core.ts).
+
+## Layout
+
+```
+skills/create-sound/
+  metadata.json            # name, version, organization, abstract
+  README.md                # contributor guide
+  SKILL.md                 # GENERATED entry point Cursor reads
+  test-cases.json          # GENERATED LLM eval cases
+  rules/
+    _sections.md           # section metadata
+    _template.md           # copy this to add a new rule
+    pipeline-*.md
+    interpret-*.md
+    event-*.md
+    mood-*.md
+    layer-*.md
+    effect-*.md
+    validate-*.md
+  src/
+    build.mjs              # rules/*.md -> SKILL.md
+    validate.mjs           # frontmatter + section prefix + example shape
+    extract-tests.mjs      # rule examples -> test-cases.json
+    analyze.py             # shared FFT helpers for the interpret-* rules
+```
+
+`SKILL.md` is regenerated from the rules and should not be hand-edited.
+
+## Rule frontmatter
+
+Every rule file starts with YAML frontmatter that the build, validate, and extract-tests steps consume.
+
+```md
+---
+title: Click - sine + low FM, very short decay
+order: 1
+impact: HIGH
+impactDescription: Default click sound; appears in nearly every patch.
+tags: event, click, transient
+prompt: "click"
+example: |
+  {
+    "source": { "type": "sine", "frequency": 1300, "fm": { "ratio": 0.5, "depth": 60 } },
+    "envelope": { "decay": 0.012, "release": 0.004 },
+    "gain": 0.18
+  }
+---
+```
+
+| Field               | Required          | Purpose                                                                       |
+| ------------------- | ----------------- | ----------------------------------------------------------------------------- |
+| `title`             | yes               | Heading rendered into `SKILL.md`.                                             |
+| `impact`            | yes               | One of CRITICAL, HIGH, MEDIUM-HIGH, MEDIUM, LOW-MEDIUM, LOW.                  |
+| `impactDescription` | no                | One-line context shown next to the heading.                                   |
+| `order`             | no                | Numeric sort key for procedural sections (`pipeline-*`, `interpret-*`).       |
+| `tags`              | no                | Comma-separated tags.                                                          |
+| `prompt`            | conditional       | Used by `extract-tests.mjs` to build a prompt-path eval case.                  |
+| `example`           | conditional       | JSON `SoundDefinition` the rule should produce. Validated by `validate.mjs`.   |
+| `inputAudio`        | interpret-* only  | Relative path to a WAV the rule should analyze (audio-path eval case).         |
+
+## Build pipeline
+
+All three scripts are zero-dependency ESM and run on plain Node.
+
+<Tabs items={[
+  { label: "build", value: "node src/build.mjs" },
+  { label: "validate", value: "node src/validate.mjs" },
+  { label: "extract-tests", value: "node src/extract-tests.mjs" },
+  { label: "dev", value: "node src/build.mjs && node src/validate.mjs" },
+]} />
+
+Or via the `package.json` scripts:
+
+```bash
+pnpm --dir skills/create-sound build
+pnpm --dir skills/create-sound validate
+pnpm --dir skills/create-sound extract-tests
+pnpm --dir skills/create-sound dev          # build + validate
+```
+
+### `build.mjs`
+
+1. Reads `metadata.json` and `rules/_sections.md`.
+2. Globs `rules/*.md` (skipping `_*.md`).
+3. Groups by filename prefix, then sorts by `order` if present, otherwise by `title`.
+4. Auto-numbers each rule `<sectionIdx>.<ruleIdx>`.
+5. Writes `SKILL.md` with Cursor-compatible frontmatter (`name`, `description`).
+
+### `validate.mjs`
+
+Enforces the live invariants from the `validate-*` rules:
+
+- Required frontmatter present, valid `impact`, known section prefix.
+- Each `example` parses as JSON and matches the `SoundDefinition` shape.
+- Layer `gain` ≤ 0.4, sum of layer gains ≤ 0.6 (see `validate-gain-budget`).
+- All `frequency` values inside 20 – 20 000 Hz (`validate-frequency-bounds`).
+- `envelope.decay > 0`, and `sustain > 0` requires `release > 0` (`validate-envelope-sanity`).
+
+### `extract-tests.mjs`
+
+Walks every rule and emits `test-cases.json`:
+
+```json
+{
+  "id": "event-click",
+  "kind": "prompt",
+  "section": "event",
+  "title": "Click - sine + low FM, very short decay",
+  "prompt": "click",
+  "expected": { "source": { "type": "sine", "frequency": 1300, "fm": { "ratio": 0.5, "depth": 60 } }, "envelope": { "decay": 0.012, "release": 0.004 }, "gain": 0.18 }
+}
+```
+
+The current rule set produces 30 cases. `interpret-*` rules with `inputAudio` produce `kind: "audio"` cases instead.
+
+## Adding a new rule
+
+1. Copy `rules/_template.md` to `rules/<prefix>-<short-name>.md`.
+2. Pick the prefix that matches the section (see `rules/_sections.md`).
+3. Fill in the frontmatter. For prompt-path rules, include both `prompt` and `example` so the rule contributes a test case.
+4. Run `pnpm --dir skills/create-sound dev` to rebuild and validate. The build fails on any frontmatter, schema, or numeric-bounds violation.
+
+## Output contract
+
+Every emitted `SoundDefinition` is a `Layer` or `MultiLayerSound` ready to paste into a `.web-kits/<patch>.ts` file:
+
+```ts
+import type { SoundDefinition } from "@web-kits/audio";
+
+export const myClick: SoundDefinition = {
+  source: { type: "sine", frequency: 1300, fm: { ratio: 0.5, depth: 60 } },
+  envelope: { decay: 0.012, release: 0.004 },
+  gain: 0.18,
+};
+```
+
+If the user asks for a preview, the `pipeline-emit-and-render` step renders the result through [`renderToWav`](/docs/api/output/render-to-wav) and (optionally) round-trip-validates it by re-running the `interpret-*` rules against the rendered audio.

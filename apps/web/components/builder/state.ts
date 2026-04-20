@@ -9,10 +9,6 @@ import type {
   Source,
 } from "@web-kits/audio";
 
-// ---------------------------------------------------------------------------
-// Builder state: always normalized to multi-layer form
-// ---------------------------------------------------------------------------
-
 export type BuilderLayer = Layer & { _id: number };
 
 export type BuilderState = {
@@ -20,10 +16,6 @@ export type BuilderState = {
   effects: Effect[];
   _nextId: number;
 };
-
-// ---------------------------------------------------------------------------
-// Actions
-// ---------------------------------------------------------------------------
 
 export type BuilderAction =
   | { type: "add-layer" }
@@ -58,10 +50,6 @@ export type BuilderAction =
   | { type: "remove-master-effect"; effectIndex: number }
   | { type: "update-master-effect"; effectIndex: number; effect: Effect };
 
-// ---------------------------------------------------------------------------
-// Initial state
-// ---------------------------------------------------------------------------
-
 export const INITIAL_STATE: BuilderState = {
   layers: [
     {
@@ -74,10 +62,6 @@ export const INITIAL_STATE: BuilderState = {
   effects: [],
   _nextId: 1,
 };
-
-// ---------------------------------------------------------------------------
-// Defaults for new items
-// ---------------------------------------------------------------------------
 
 function defaultLayer(id: number): BuilderLayer {
   return {
@@ -100,10 +84,6 @@ function defaultLFO(): LFO {
   return { type: "sine", frequency: 4, depth: 100, target: "filter.frequency" };
 }
 
-// ---------------------------------------------------------------------------
-// Helpers to normalize arrays in layers (filter, lfo can be single or array)
-// ---------------------------------------------------------------------------
-
 function filtersArray(layer: Layer): Filter[] {
   if (!layer.filter) return [];
   return Array.isArray(layer.filter) ? [...layer.filter] : [layer.filter];
@@ -119,10 +99,6 @@ function collapseArray<T>(arr: T[]): T | T[] | undefined {
   if (arr.length === 1) return arr[0];
   return arr;
 }
-
-// ---------------------------------------------------------------------------
-// Reducer
-// ---------------------------------------------------------------------------
 
 function updateLayer(
   state: BuilderState,
@@ -269,10 +245,6 @@ export function builderReducer(
   }
 }
 
-// ---------------------------------------------------------------------------
-// Convert builder state → SoundDefinition for playback
-// ---------------------------------------------------------------------------
-
 export function toDefinition(state: BuilderState): SoundDefinition {
   if (state.layers.length === 1 && state.effects.length === 0) {
     return cleanLayer(state.layers[0]);
@@ -296,10 +268,6 @@ function cleanLayer(layer: BuilderLayer): Layer {
   if (layer.panner) out.panner = layer.panner;
   return out;
 }
-
-// ---------------------------------------------------------------------------
-// Serialize builder state → formatted TypeScript code string
-// ---------------------------------------------------------------------------
 
 export function serializeToCode(state: BuilderState): string {
   const def = toDefinition(state);

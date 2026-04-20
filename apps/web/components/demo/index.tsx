@@ -33,8 +33,6 @@ interface DemoProps {
   controls?: Control[];
 }
 
-// --- Knob tick sound ---
-
 let knobTick: ReturnType<typeof defineSound> | null = null;
 
 function playTick() {
@@ -47,8 +45,6 @@ function playTick() {
   }
   knobTick();
 }
-
-// --- Knob SVG helpers ---
 
 const ARC_START = 135;
 const ARC_END = 405;
@@ -191,8 +187,6 @@ function Knob({
     </div>
   );
 }
-
-// --- Demo variants ---
 
 function DemoInteractive({
   label,

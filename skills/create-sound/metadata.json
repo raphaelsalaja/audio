@@ -1,0 +1,6 @@
+{
+  "name": "create-sound",
+  "version": "0.1.0",
+  "organization": "@web-kits/audio",
+  "abstract": "Generate a SoundDefinition for @web-kits/audio from any input - a natural-language prompt, an audio file the user shares, or both. Use when the user says \"create a sound\", \"/create-sound\", \"design a sound for X\", shares a WAV/MP3/sprite, or asks to reverse-engineer a sample. Optionally renders a WAV preview and round-trip-validates the result."
+}
