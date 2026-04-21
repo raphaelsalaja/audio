@@ -8,14 +8,6 @@ Declarative audio synthesis for the web. Describe sounds as plain objects, play 
 
 > ~11 kB gzipped, tree-shakeable, works with vanilla JS or React.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/raphaelsalaja/audio/main/assets/launch-video.gif" alt="@web-kits/audio launch video: bold type, tactile UI primitives, and code reveal — every interaction synced to a real Playful pack sound." width="720" />
-</p>
-
-<p align="center">
-  <em>Sound is design too. Render the video yourself with <code>pnpm --filter marketing render</code>.</em>
-</p>
-
 ## Install
 
 ```bash
