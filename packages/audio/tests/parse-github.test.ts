@@ -22,6 +22,28 @@ describe("parseGitHubSource", () => {
     });
   });
 
+  it("parses GitHub URL with trailing slash", () => {
+    const result = parseGitHubSource("https://github.com/raphaelsalaja/audio/");
+    expect(result).toEqual({
+      owner: "raphaelsalaja",
+      repo: "audio",
+      branch: "main",
+      path: "",
+    });
+  });
+
+  it("parses GitHub URL with .git suffix", () => {
+    const result = parseGitHubSource(
+      "https://github.com/raphaelsalaja/audio.git",
+    );
+    expect(result).toEqual({
+      owner: "raphaelsalaja",
+      repo: "audio",
+      branch: "main",
+      path: "",
+    });
+  });
+
   it("parses GitHub URL with branch", () => {
     const result = parseGitHubSource(
       "https://github.com/raphaelsalaja/audio/tree/develop",
@@ -60,6 +82,16 @@ describe("parseGitHubSource", () => {
 
   it("returns null for empty string", () => {
     expect(parseGitHubSource("")).toBeNull();
+  });
+
+  it("parses owner/repo shorthand with .git suffix", () => {
+    const result = parseGitHubSource("raphaelsalaja/audio.git");
+    expect(result).toEqual({
+      owner: "raphaelsalaja",
+      repo: "audio",
+      branch: "main",
+      path: "",
+    });
   });
 });
 

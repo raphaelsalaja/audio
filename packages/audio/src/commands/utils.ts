@@ -109,7 +109,9 @@ export function parseGitHubSource(source: string): {
   branch: string;
   path: string;
 } | null {
-  const ghUrlMatch = source.match(
+  const normalizedSource = source.replace(/\/+$/, "").replace(/\.git$/, "");
+
+  const ghUrlMatch = normalizedSource.match(
     /^https?:\/\/github\.com\/([^/]+)\/([^/]+?)(?:\/tree\/([^/]+)(?:\/(.+))?)?$/,
   );
   if (ghUrlMatch) {
@@ -121,7 +123,7 @@ export function parseGitHubSource(source: string): {
     };
   }
 
-  const shorthand = source.match(/^([^/]+)\/([^/]+)$/);
+  const shorthand = normalizedSource.match(/^([^/]+)\/([^/]+)$/);
   if (shorthand) {
     return {
       owner: shorthand[1],
