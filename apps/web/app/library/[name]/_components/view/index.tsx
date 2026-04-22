@@ -77,7 +77,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Main({ children }: { children: React.ReactNode }) {
-  return <div className={styles.main}>{children}</div>;
+  return <div className={styles.content}>{children}</div>;
 }
 
 function Breadcrumb() {
