@@ -150,3 +150,53 @@ export function CheckIcon({ size = 14 }: { size?: number }) {
     </svg>
   );
 }
+
+export function DiceIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="2"
+        y="2"
+        width="10"
+        height="10"
+        rx="2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <circle cx="5" cy="5" r="0.9" fill="currentColor" />
+      <circle cx="9" cy="5" r="0.9" fill="currentColor" />
+      <circle cx="7" cy="9" r="0.9" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function PowerIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M7 1.8v4.4"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4.1 3.3a4.6 4.6 0 1 0 5.8 0"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
