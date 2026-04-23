@@ -19,12 +19,17 @@ const LINKS = [
   {
     href: "/",
     label: "Docs",
-    match: (p: string) => !p.startsWith("/library"),
+    match: (p: string) => !p.startsWith("/library") && !p.startsWith("/editor"),
   },
   {
     href: "/library",
     label: "Library",
     match: (p: string) => p.startsWith("/library"),
+  },
+  {
+    href: "/editor",
+    label: "Editor",
+    match: (p: string) => p.startsWith("/editor"),
   },
 ];
 
