@@ -4,7 +4,7 @@
 
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   AudioBuffer as NodeAudioBuffer,
   AudioContext as NodeAudioContext,
@@ -126,7 +126,11 @@ async function bakePatch(
   patch: PatchId,
 ): Promise<Manifest["patches"][PatchId]> {
   const patchPath = join(patchesDir, `${patch}.json`);
-  const data = (await import(patchPath, { with: { type: "json" } }))
+  const patchUrl = pathToFileURL(patchPath).href;
+  const data = (await import(
+    patchUrl,
+    { with: { type: "json" } } as unknown as ImportCallOptions,
+  ))
     .default as {
     name: string;
     sounds: Record<string, RawDefinition>;
