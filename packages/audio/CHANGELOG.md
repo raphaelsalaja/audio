@@ -2,6 +2,10 @@
 
 ## 0.2.0
 
+### Patch Changes
+
+- Restore the Node.js interpreter header so the installed `audio` CLI runs correctly.
+
 ### Minor Changes
 
 - ec45185: Add a `jitter` option to `PlayOptions` for per-voice random variation. Pick any combination of `detune` (cents), `volume` (fraction), and `playbackRate` (fraction) to humanize repeated triggers — so buttons pressed in quick succession no longer sound identical.
