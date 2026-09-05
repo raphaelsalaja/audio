@@ -64,6 +64,12 @@ Follow the prompts to describe what changed and the semver bump type. This creat
 The Release workflow on `main` versions packages with Changesets, or publishes
 unpublished package versions when no changesets remain. It typechecks, tests, and
 builds `@web-kits/audio` independently of the private website and marketing apps.
+It also installs a packed tarball in a temporary project and checks the library
+import and executable CLI. Run this check locally after building:
+
+```bash
+bash scripts/smoke-package.sh
+```
 
 Configure the repository's `NPM_TOKEN` Actions secret with permission to publish
 `@web-kits/audio`. The workflow passes this secret as both `NPM_TOKEN` for

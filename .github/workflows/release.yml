@@ -43,6 +43,9 @@ jobs:
       - name: Build package
         run: pnpm --filter @web-kits/audio build
 
+      - name: Verify installed package
+        run: bash scripts/smoke-package.sh
+
       - name: Create Release PR or publish
         uses: changesets/action@v1
         with:
