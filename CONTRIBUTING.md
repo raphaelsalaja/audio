@@ -59,6 +59,26 @@ pnpm changeset
 
 Follow the prompts to describe what changed and the semver bump type. This creates a markdown file in `.changeset/` that gets consumed during release.
 
+## Publishing
+
+The Release workflow on `main` versions packages with Changesets, or publishes
+unpublished package versions when no changesets remain. It typechecks, tests, and
+builds `@web-kits/audio` independently of the private website and marketing apps.
+
+Configure the repository's `NPM_TOKEN` Actions secret with permission to publish
+`@web-kits/audio`. The workflow passes this secret as both `NPM_TOKEN` for
+Changesets and `NODE_AUTH_TOKEN` for the npm configuration created by setup-node.
+
+If publishing fails after a version bump, fix the underlying error and rerun the
+Release workflow from Actions on `main` using **Run workflow**. Keep the existing
+package version when it has not yet been published; a new changeset is not needed
+for a release workflow repair. Verify the result with:
+
+```bash
+npm view @web-kits/audio version
+npm view @web-kits/audio@0.2.0 version
+```
+
 ## Commit convention
 
 Commits must follow [Conventional Commits](https://www.conventionalcommits.org/). A `commitlint` hook enforces this automatically.
